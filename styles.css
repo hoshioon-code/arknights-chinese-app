@@ -123,6 +123,14 @@ h2.sec-title::before{content:"";display:inline-block;width:9px;height:9px;backgr
 .report-cats button.sel{background:#f7d117;border-color:#f7d117;color:#111;font-weight:700}
 #report-comment{width:100%;box-sizing:border-box;border:1px solid rgba(127,127,140,.45);border-radius:8px;background:none;color:inherit;padding:10px;font-size:14px;margin-bottom:10px}
 #sync-token{width:100%;box-sizing:border-box;border:1px solid rgba(127,127,140,.45);border-radius:8px;background:none;color:inherit;padding:10px;font-size:14px}
+.report-row{border:1px solid rgba(127,127,140,.3);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.report-row.resolved{opacity:.55}
+.rr-head{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.rr-cat{font-weight:700;color:#f7d117}
+.rr-date{color:var(--muted,#9a9aa5)}
+.rr-q{font-size:13px;white-space:pre-wrap;word-break:break-all}
+.rr-c{font-size:12px;color:var(--muted,#9a9aa5);margin-top:2px}
+.rr-toggle{margin-top:8px;padding:6px 12px;font-size:12px;width:auto}
 #toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#22242c;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.35);max-width:88vw;text-align:center}
 .fb-sentence{cursor:pointer}
 .fb-sentence::before{content:'🔊';font-size:13px;margin-right:6px;opacity:.8}

@@ -196,7 +196,7 @@ document.getElementById('sheet-backdrop').addEventListener('click', hideSheets);
 document.getElementById('btn-settings').addEventListener('click', () => {
   document.getElementById('set-pinyin').checked = store.data.settings.pinyin;
   document.getElementById('set-pos').checked = store.data.settings.pos;
-  document.getElementById('report-count').textContent = loadReports().length;
+  document.getElementById('report-count').textContent = loadReports().filter(r => !r.resolved).length;
   setSyncStatus(syncCfg().token ? '同期は有効です（開くたび・記録の保存のたびに自動同期します）' : '同期は未設定です');
   showSheet('settings-sheet');
 });
@@ -238,18 +238,44 @@ document.querySelectorAll('#report-cats button').forEach(b => b.addEventListener
 document.getElementById('report-send').addEventListener('click', () => {
   if (!reportCat) { document.getElementById('report-msg').textContent = 'カテゴリを選んでください。'; return; }
   const reports = loadReports();
-  reports.push({ ts: new Date().toISOString(), category: reportCat, comment: document.getElementById('report-comment').value.trim(), question: questionSummary() });
+  reports.push({ ts: new Date().toISOString(), category: reportCat, comment: document.getElementById('report-comment').value.trim(), question: questionSummary(), resolved: false });
   try { localStorage.setItem(REPORTS_KEY, JSON.stringify(reports)); } catch (e) {}
   scheduleSyncPush();
   hideSheets();
   toast('報告を保存しました。ありがとうございます！');
 });
+function saveReports(arr) {
+  try { localStorage.setItem(REPORTS_KEY, JSON.stringify(arr)); } catch (e) {}
+  scheduleSyncPush();
+}
+function reportKey(r) { return r.ts + '|' + r.question; }
+function renderReportsList() {
+  const reports = loadReports().slice().sort((a, b) => (a.ts < b.ts ? 1 : -1));
+  const el = document.getElementById('reports-list');
+  if (!reports.length) { el.innerHTML = '<p class="sheet-note">まだ報告はありません。</p>'; return; }
+  el.innerHTML = reports.map(r => `
+    <div class="report-row ${r.resolved ? 'resolved' : ''}">
+      <div class="rr-head"><span class="rr-cat">${esc(r.category)}</span><span class="rr-date">${esc(r.ts.slice(0, 10))}</span></div>
+      <div class="rr-q">${esc(r.question.split('\n').slice(0, 2).join(' / '))}</div>
+      ${r.comment ? `<div class="rr-c">コメント: ${esc(r.comment)}</div>` : ''}
+      <button class="btn ${r.resolved ? 'btn-ghost' : ''} rr-toggle" data-resolve="${esc(reportKey(r))}">${r.resolved ? '解決済み ✓（戻す）' : '解決済みにする'}</button>
+    </div>`).join('');
+  el.querySelectorAll('[data-resolve]').forEach(b => b.addEventListener('click', () => {
+    const key = b.getAttribute('data-resolve');
+    const arr = loadReports();
+    const r = arr.find(x => reportKey(x) === key);
+    if (r) { r.resolved = !r.resolved; saveReports(arr); }
+    renderReportsList();
+    document.getElementById('report-count').textContent = loadReports().filter(x => !x.resolved).length;
+  }));
+}
+document.getElementById('btn-reports-open').addEventListener('click', () => { renderReportsList(); showSheet('reports-sheet'); });
 document.getElementById('btn-copy-reports').addEventListener('click', async () => {
-  const reports = loadReports();
+  const reports = loadReports().filter(r => !r.resolved);
   const msgEl = document.getElementById('report-copy-msg');
-  if (!reports.length) { msgEl.textContent = 'まだ報告はありません。'; return; }
+  if (!reports.length) { msgEl.textContent = '未解決の報告はありません。'; return; }
   const text = reports.map(r => `【${r.ts.slice(0, 10)}】${r.category}\n${r.question}${r.comment ? '\nコメント: ' + r.comment : ''}`).join('\n\n');
-  try { await navigator.clipboard.writeText(text); msgEl.textContent = '報告をコピーしました。チャットに貼って送ってください。'; }
+  try { await navigator.clipboard.writeText(text); msgEl.textContent = '未解決の報告をコピーしました。チャットに貼って送ってください。'; }
   catch (e) { msgEl.textContent = 'コピーできませんでした。'; }
 });
 
@@ -307,14 +333,16 @@ async function syncNow(manual) {
       rerender();
     }
     await syncPut('progress.json', store.data, remoteP ? remoteP.sha : undefined, 'Sync progress');
-    // reports: union merge (append-only on both sides)
+    // reports: union merge (append-only on both sides); 'resolved' is sticky (OR)
     const remoteR = await syncGet('reports.json');
     const localReports = loadReports();
-    const rkey = r => r.ts + '|' + r.question;
-    const seen = new Set(localReports.map(rkey));
-    const merged = localReports.slice();
-    if (remoteR && Array.isArray(remoteR.obj)) for (const r of remoteR.obj) if (!seen.has(rkey(r))) { merged.push(r); seen.add(rkey(r)); }
-    merged.sort((a, b) => (a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0));
+    const byKey = new Map(localReports.map(r => [reportKey(r), r]));
+    if (remoteR && Array.isArray(remoteR.obj)) for (const r of remoteR.obj) {
+      const k = reportKey(r);
+      if (byKey.has(k)) { const cur = byKey.get(k); cur.resolved = !!(cur.resolved || r.resolved); }
+      else byKey.set(k, r);
+    }
+    const merged = [...byKey.values()].sort((a, b) => (a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0));
     if (JSON.stringify(merged) !== JSON.stringify(localReports)) { try { localStorage.setItem(REPORTS_KEY, JSON.stringify(merged)); } catch (e) {} }
     await syncPut('reports.json', merged, remoteR ? remoteR.sha : undefined, 'Sync reports');
     setSyncStatus('同期済み：' + new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }));

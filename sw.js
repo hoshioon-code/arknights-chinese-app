@@ -3,7 +3,7 @@
    - Audio MP3: served from the user-managed per-chapter caches
      ('akcn-audio-<chapterId>') when present; otherwise network only
      (never auto-stored, so device storage stays under user control). */
-const SHELL = 'akcn-shell-v12';
+const SHELL = 'akcn-shell-v13';
 const SHELL_FILES = [
   './', 'index.html', 'styles.css', 'app.js', 'manifest.json',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png',
@@ -37,6 +37,20 @@ self.addEventListener('fetch', e => {
     e.respondWith(
       caches.match(e.request, { ignoreSearch: true })
         .then(hit => hit || fetch(e.request))
+    );
+    return;
+  }
+  if (url.origin === location.origin && url.pathname.includes('/data/')) {
+    // Data JSON: network-first, so content updates (new chapters etc.) arrive
+    // without needing a service-worker update; cache is the offline fallback.
+    e.respondWith(
+      fetch(e.request).then(res => {
+        if (res.ok) {
+          const copy = res.clone();
+          caches.open(SHELL).then(c => c.put(e.request, copy));
+        }
+        return res;
+      }).catch(() => caches.match(e.request, { ignoreSearch: true }))
     );
     return;
   }

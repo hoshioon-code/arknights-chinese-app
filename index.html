@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>アークナイツで学ぶ中国語</title>
+<meta name="description" content="アークナイツの物語テキストで中国語を学ぶ、Duolingo風レッスンアプリ">
+<meta name="theme-color" content="#101014">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="アークナイツ中国語">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <div class="tb-left">
+      <div class="logo-mark" aria-hidden="true"></div>
+      <div class="tb-title">アークナイツで学ぶ中国語</div>
+    </div>
+    <div class="tb-right">
+      <div class="stat-chip" title="連続学習日数"><span class="stat-ico">◆</span><span id="stat-streak">0日</span></div>
+      <div class="stat-chip" title="累計XP"><span class="stat-ico">XP</span><span id="stat-xp">0</span></div>
+      <button id="btn-settings" class="icon-btn" aria-label="設定">⚙</button>
+    </div>
+  </header>
+  <div class="hazard" aria-hidden="true"></div>
+
+  <main id="view"></main>
+
+  <div id="sheet-backdrop" class="hidden"></div>
+
+  <!-- word detail sheet -->
+  <section id="word-sheet" class="sheet hidden" aria-label="単語の詳細">
+    <div class="sheet-handle"></div>
+    <div id="word-sheet-body"></div>
+  </section>
+
+  <!-- settings sheet -->
+  <section id="settings-sheet" class="sheet hidden" aria-label="設定">
+    <div class="sheet-handle"></div>
+    <h2 class="sheet-title">設定</h2>
+    <label class="setting-row">
+      <span>ピンイン表示</span>
+      <input type="checkbox" id="set-pinyin" class="switch">
+    </label>
+    <label class="setting-row">
+      <span>品詞カラー（名詞・動詞・形容詞…）</span>
+      <input type="checkbox" id="set-pos" class="switch">
+    </label>
+    <div class="pos-legend">
+      <span class="lg lg-noun">名詞</span>
+      <span class="lg lg-verb">動詞</span>
+      <span class="lg lg-adj">形容詞</span>
+      <span class="lg lg-adv">副詞</span>
+      <span class="lg lg-pron">代名詞</span>
+    </div>
+    <p class="sheet-note">設定はこの端末に保存されます。学習記録（XP・ストリーク・進捗・ミス）も端末内のみに保存されます。</p>
+    <button class="btn btn-ghost" id="settings-close">閉じる</button>
+  </section>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

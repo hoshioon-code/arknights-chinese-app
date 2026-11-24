@@ -69,17 +69,18 @@ h2.sec-title::before{content:"";display:inline-block;width:9px;height:9px;backgr
 .chapter-head .ch-name{font-size:16px;font-weight:800}
 .chapter-head .ch-name-jp{color:var(--muted);font-size:12px}
 .path{display:flex;flex-direction:column;align-items:center;gap:0;padding:8px 0}
-.node-wrap{display:flex;flex-direction:column;align-items:center}
+.node-wrap{display:flex;flex-direction:column;align-items:center;transform:translateX(var(--dx,0px))}
 .node{width:76px;height:76px;border:3px solid var(--line);background:var(--panel2);color:var(--text);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+  clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px))}
 .node .n-ico{font-size:20px;line-height:1}
 .node .n-lab{font-size:10px;font-weight:800;letter-spacing:.05em}
 .node.sentence{border-color:var(--amber)}
-.node.word{border-color:var(--jade);width:64px;height:64px}
+.node.word{border-color:var(--jade);width:64px;height:64px;
+  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px))}
 .node.done{background:var(--yellow);border-color:var(--yellow);color:#141414}
 .node.word.done{background:var(--jade);border-color:var(--jade);color:#0c1a17}
-.node-link{width:3px;height:20px;background:var(--line)}
+.node-link{width:3px;height:14px;background:var(--line)}
 .node-cap{font-size:11px;color:var(--muted);margin-top:3px;text-align:center;max-width:150px}
 .node-cap b{color:var(--text);font-size:12px}
 
@@ -108,6 +109,10 @@ h2.sec-title::before{content:"";display:inline-block;width:9px;height:9px;backgr
 .q-jp-q{font-size:19px;line-height:1.6;font-weight:700}
 .q-py{color:var(--amber);font-size:14px;margin-top:4px;line-height:1.5}
 .seg{display:inline-block;padding:0 1px;border-bottom:1px dotted #55555f;border-radius:3px}
+.q-zh span,.r-zh span{transition:background-color .15s ease}
+.q-zh span.hl,.r-zh span.hl{background:rgba(247,209,23,.38);border-radius:3px}
+.speak-btn.playing,.speak-big.playing{animation:spk-pulse .9s ease-in-out infinite}
+@keyframes spk-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
 .seg:active{background:#33333f}
 .pos-noun{color:var(--noun)} .pos-verb{color:var(--verb)} .pos-adj{color:var(--adj)}
 .pos-adv{color:var(--adv)} .pos-pron{color:var(--pron)}

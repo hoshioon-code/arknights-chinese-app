@@ -68,11 +68,44 @@ async function loadEpisode(epId) {
 // ---------------- audio ----------------
 const audioEl = new Audio();
 function hasAudio(text) { return !!(AUDIO_MAP && AUDIO_MAP[text]); }
-function playText(text) {
+// Playback word highlighting: MP3s carry no word timestamps, so the current
+// word is estimated from elapsed time weighted by segment length.
+let hlState = null;
+function clearHL() {
+  if (!hlState) return;
+  hlState.spans.forEach(s => s.el.classList.remove('hl'));
+  if (hlState.btn) hlState.btn.classList.remove('playing');
+  hlState = null;
+}
+function findSentenceEl(fromEl) {
+  let el = fromEl;
+  for (let i = 0; i < 8 && el; i++) {
+    if (el.querySelector) {
+      const t = el.querySelector('.q-zh, .r-zh');
+      if (t) return t;
+    }
+    el = el.parentElement;
+  }
+  return null;
+}
+function playText(text, btn) {
   if (!hasAudio(text)) return;
+  clearHL();
   audioEl.src = AUDIO_MAP[text];
   audioEl.play().catch(() => {});
+  const box = btn ? findSentenceEl(btn) : null;
+  const spans = box ? [...box.querySelectorAll('span')].map(el => ({ el, w: Math.max(1, el.textContent.length) })) : [];
+  hlState = { spans, btn: btn || null, total: spans.reduce((a, s) => a + s.w, 0) };
+  if (btn) btn.classList.add('playing');
 }
+audioEl.addEventListener('timeupdate', () => {
+  if (!hlState || !hlState.spans.length || !audioEl.duration) return;
+  let target = (audioEl.currentTime / audioEl.duration) * hlState.total;
+  let cur = hlState.spans[hlState.spans.length - 1];
+  for (const s of hlState.spans) { target -= s.w; if (target < 0) { cur = s; break; } }
+  hlState.spans.forEach(s => s.el.classList.toggle('hl', s === cur));
+});
+audioEl.addEventListener('ended', clearHL);
 function speakBtn(text, big) {
   if (!hasAudio(text)) return '';
   return `<button class="${big ? 'speak-big' : 'speak-btn'}" data-speak="${esc(text)}" aria-label="音声を再生">🔊${big ? '' : ' 音声'}</button>`;
@@ -132,7 +165,7 @@ document.getElementById('set-pos').addEventListener('change', e => { store.data.
 // global click delegation for speak buttons / segment taps / sheet close
 document.addEventListener('click', e => {
   const sp = e.target.closest('[data-speak]');
-  if (sp) { playText(sp.getAttribute('data-speak')); return; }
+  if (sp) { playText(sp.getAttribute('data-speak'), sp); return; }
   const sg = e.target.closest('[data-seg]');
   if (sg && SEG_REG[+sg.getAttribute('data-seg')]) { openWordSheet(SEG_REG[+sg.getAttribute('data-seg')]); return; }
   if (e.target.closest('[data-close-sheet]')) hideSheets();
@@ -254,13 +287,15 @@ async function renderHome() {
   if (UI.tab === 'story') {
     for (const ch of META.chapters) {
       html += `<div class="chapter-head"><span class="ch-name">${esc(ch.name)}</span><span class="ch-name-jp">${esc(ch.nameJp)}</span></div><div class="path">`;
+      let nodeIdx = 0;
       ch.episodes.forEach((ep, i) => {
         const title = (ep.code ? ep.code + ' ' : '') + ep.name;
         for (const [kind, label, ico] of [['s', '文章', '文'], ['w', '単語', '語']]) {
           const stId = `${kind}:${ep.id}`;
           const done = store.data.done[stId];
+          const dx = [0, -46, -68, -46, 0, 46, 68, 46][nodeIdx % 8]; nodeIdx++;
           html += `
-            <div class="node-wrap">
+            <div class="node-wrap" style="--dx:${dx}px">
               ${i > 0 || kind === 'w' ? '<div class="node-link"></div>' : ''}
               <button class="node ${kind === 's' ? 'sentence' : 'word'} ${done && done.cleared ? 'done' : ''}" data-stage="${stId}">
                 <span class="n-ico">${ico}</span><span class="n-lab">${label}</span>

@@ -40,6 +40,27 @@
     <div id="word-sheet-body"></div>
   </section>
 
+  <!-- report sheet -->
+  <section id="report-sheet" class="sheet hidden" aria-label="問題を報告">
+    <div class="sheet-handle"></div>
+    <h2 class="sheet-title">この問題を報告する</h2>
+    <div id="report-target" class="report-target"></div>
+    <div class="report-cats" id="report-cats">
+      <button data-cat="音声がおかしい">音声がおかしい</button>
+      <button data-cat="中国語がおかしい">中国語がおかしい</button>
+      <button data-cat="日本語訳がおかしい">日本語訳がおかしい</button>
+      <button data-cat="選択肢・答えがおかしい">選択肢・答えがおかしい</button>
+      <button data-cat="ピンイン・解説がおかしい">ピンイン・解説がおかしい</button>
+      <button data-cat="その他">その他</button>
+    </div>
+    <textarea id="report-comment" rows="3" placeholder="コメント（任意）"></textarea>
+    <p class="sheet-note" id="report-msg" role="status"></p>
+    <button class="btn" id="report-send" style="width:100%">送信する</button>
+    <button class="btn btn-ghost" data-close-sheet style="width:100%;margin-top:8px">閉じる</button>
+  </section>
+
+  <div id="toast" class="hidden"></div>
+
   <!-- settings sheet -->
   <section id="settings-sheet" class="sheet hidden" aria-label="設定">
     <div class="sheet-handle"></div>
@@ -66,6 +87,10 @@
     <button class="btn btn-ghost" id="btn-import" style="width:100%">記録をインポート</button>
     <input type="file" id="import-file" accept="application/json,.json" class="hidden">
     <p class="sheet-note" id="backup-msg" role="status"></p>
+    <h3 class="sheet-title" style="font-size:15px;margin-top:14px">問題報告</h3>
+    <p class="sheet-note">レッスン中の「この問題を報告する」から送った報告は、この端末に保存されます（<span id="report-count">0</span>件）。コピーしてチャットで私に送ってもらえると、内容を確認できます。</p>
+    <button class="btn btn-ghost" id="btn-copy-reports" style="width:100%">報告をコピーする</button>
+    <p class="sheet-note" id="report-copy-msg" role="status"></p>
     <button class="btn btn-ghost" id="settings-close">閉じる</button>
   </section>
 </div>

@@ -194,11 +194,60 @@ document.getElementById('sheet-backdrop').addEventListener('click', hideSheets);
 document.getElementById('btn-settings').addEventListener('click', () => {
   document.getElementById('set-pinyin').checked = store.data.settings.pinyin;
   document.getElementById('set-pos').checked = store.data.settings.pos;
+  document.getElementById('report-count').textContent = loadReports().length;
   showSheet('settings-sheet');
 });
 document.getElementById('settings-close').addEventListener('click', hideSheets);
 document.getElementById('set-pinyin').addEventListener('change', e => { store.data.settings.pinyin = e.target.checked; store.save(); rerender(); });
 document.getElementById('set-pos').addEventListener('change', e => { store.data.settings.pos = e.target.checked; store.save(); rerender(); });
+
+// ---- problem reports (saved on this device) ----
+const REPORTS_KEY = 'akcn-reports-v1';
+function loadReports() { try { return JSON.parse(localStorage.getItem(REPORTS_KEY)) || []; } catch (e) { return []; } }
+let toastTimer = null;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.add('hidden'), 2600);
+}
+function questionSummary() {
+  if (!L) return '';
+  const q = L.qs[L.idx];
+  const head = `${L.title} ・ ${L.idx + 1}問目`;
+  if (q.type === 'sentence') return `${head}\n文章問題（${q.dir === 'z2j' ? '中国語→日本語' : '日本語→中国語'}）\n中国語: ${q.line.zh}\n日本語: ${q.line.jp}`;
+  if (q.type === 'word') return `${head}\n単語問題（${q.dir}）\n単語: ${q.word.w}（${q.word.py}）= ${q.word.gloss}`;
+  return `${head}\n用語問題（${q.dir}）\n用語: ${q.term.zh}（${q.term.py}）= ${q.term.jp}`;
+}
+let reportCat = '';
+function openReport() {
+  reportCat = '';
+  document.querySelectorAll('#report-cats button').forEach(b => b.classList.remove('sel'));
+  document.getElementById('report-comment').value = '';
+  document.getElementById('report-msg').textContent = '';
+  document.getElementById('report-target').textContent = questionSummary();
+  showSheet('report-sheet');
+}
+document.querySelectorAll('#report-cats button').forEach(b => b.addEventListener('click', () => {
+  reportCat = b.getAttribute('data-cat');
+  document.querySelectorAll('#report-cats button').forEach(x => x.classList.toggle('sel', x === b));
+}));
+document.getElementById('report-send').addEventListener('click', () => {
+  if (!reportCat) { document.getElementById('report-msg').textContent = 'カテゴリを選んでください。'; return; }
+  const reports = loadReports();
+  reports.push({ ts: new Date().toISOString(), category: reportCat, comment: document.getElementById('report-comment').value.trim(), question: questionSummary() });
+  try { localStorage.setItem(REPORTS_KEY, JSON.stringify(reports)); } catch (e) {}
+  hideSheets();
+  toast('報告を保存しました。ありがとうございます！');
+});
+document.getElementById('btn-copy-reports').addEventListener('click', async () => {
+  const reports = loadReports();
+  const msgEl = document.getElementById('report-copy-msg');
+  if (!reports.length) { msgEl.textContent = 'まだ報告はありません。'; return; }
+  const text = reports.map(r => `【${r.ts.slice(0, 10)}】${r.category}\n${r.question}${r.comment ? '\nコメント: ' + r.comment : ''}`).join('\n\n');
+  try { await navigator.clipboard.writeText(text); msgEl.textContent = '報告をコピーしました。チャットに貼って送ってください。'; }
+  catch (e) { msgEl.textContent = 'コピーできませんでした。'; }
+});
 
 // ---- backup: export / import learning records ----
 document.getElementById('btn-export').addEventListener('click', () => {
@@ -609,7 +658,14 @@ function renderQuestion() {
     </div>
     <div class="lesson-foot">
       <button class="btn" id="btn-check" disabled>答え合わせ</button>
-    </div>`;
+    </div>
+    <div class="report-bar"><button id="btn-report" class="report-btn">⚠ この問題を報告する</button></div>`;
+  $view.querySelector('#btn-report').addEventListener('click', openReport);
+  // when the prompt itself is Chinese, play its audio as the question starts
+  const auto = q.type === 'sentence' ? (q.dir === 'z2j' ? q.line.zh : null)
+    : q.type === 'word' ? (q.dir === 'm2w' ? null : q.word.w)
+    : (q.dir === 'j2z' ? null : q.term.zh);
+  if (auto && hasAudio(auto)) playText(auto);
   $view.querySelector('#btn-quit').addEventListener('click', () => { L = null; UI.view = 'home'; renderHome(); });
   $view.querySelectorAll('[data-choice]').forEach(b => b.addEventListener('click', () => {
     if (L.judged) return;

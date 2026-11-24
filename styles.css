@@ -4,6 +4,7 @@
   --yellow2:#ffe94d; --amber:#e8a33d; --jade:#39c2a5; --red:#ff5a5a; --green:#58cc7a;
   --noun:#6cb2ff; --verb:#ff9e6e; --adj:#ffe066; --adv:#7be3a8; --pron:#d29bff;
   --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
@@ -20,7 +21,7 @@ button{font-family:inherit;cursor:pointer}
 
 /* header */
 #topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;
-  gap:8px;padding:10px 12px;background:rgba(16,16,20,.92);backdrop-filter:blur(6px);
+  gap:8px;padding:calc(10px + var(--safe-t)) 12px 10px;background:rgba(16,16,20,.92);backdrop-filter:blur(6px);
   border-bottom:1px solid var(--line)}
 .tb-left{display:flex;align-items:center;gap:8px;min-width:0}
 .logo-mark{width:22px;height:22px;flex:0 0 auto;background:var(--yellow);

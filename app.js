@@ -152,12 +152,13 @@ function speakBtn(text, big) {
 
 // ---------------- segmented text ----------------
 const SEG_REG = []; // segments rendered on the current screen, for word taps
-function segHTML(line) {
+function segHTML(line, hlWord) {
   return (line.seg || []).map(s => {
     const cls = store.data.settings.pos && s[2] !== 'other' ? ` pos-${s[2]}` : '';
     if (!s[1]) return `<span>${esc(s[0])}</span>`;
     const gi = SEG_REG.length; SEG_REG.push(s);
-    return `<span class="seg${cls}" data-seg="${gi}">${esc(s[0])}</span>`;
+    const tgt = hlWord && s[0] === hlWord ? ' target' : '';
+    return `<span class="seg${cls}${tgt}" data-seg="${gi}">${esc(s[0])}</span>`;
   }).join('');
 }
 function openWordSheet(seg) {
@@ -859,7 +860,7 @@ function judge() {
   } else if (q.type === 'word') {
     const w = q.word;
     const exHtml = !w.exZh ? '' : (w.exLine
-      ? `<div class="ws-ex">例文：<div class="q-zh" style="font-size:16px">${segHTML(w.exLine)}</div><div class="muted" style="margin-top:4px">${esc(w.exJp)}</div><div style="margin-top:4px">${speakBtn(w.exZh)}</div></div>`
+      ? `<div class="ws-ex">例文：<div class="q-zh" style="font-size:16px">${segHTML(w.exLine, w.w)}</div><div class="muted" style="margin-top:4px">${esc(w.exJp)}</div><div style="margin-top:4px">${speakBtn(w.exZh)}</div></div>`
       : `<div class="ws-ex">例文：${esc(w.exZh)}<br><span class="muted">${esc(w.exJp)}</span><div style="margin-top:4px">${speakBtn(w.exZh)}</div></div>`);
     pair = `<div class="fb-pair"><b style="font-size:19px">${esc(w.w)}</b> <span class="q-py">${esc(w.py)}</span> — ${esc(w.gloss)}
       <div style="margin-top:6px">${speakBtn(w.w)}</div>

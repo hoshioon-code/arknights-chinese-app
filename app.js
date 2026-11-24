@@ -116,6 +116,7 @@ function clearHL() {
 function findSentenceEl(fromEl) {
   let el = fromEl;
   for (let i = 0; i < 8 && el; i++) {
+    if (el.matches && el.matches('.q-zh, .r-zh')) return el;
     if (el.querySelector) {
       const t = el.querySelector('.q-zh, .r-zh');
       if (t) return t;
@@ -235,6 +236,8 @@ importFileEl.addEventListener('change', async () => {
 document.addEventListener('click', e => {
   const sp = e.target.closest('[data-speak]');
   if (sp) { playText(sp.getAttribute('data-speak'), sp); return; }
+  const ss = e.target.closest('[data-speak-sentence]');
+  if (ss && !e.target.closest('[data-seg]')) { playText(ss.getAttribute('data-speak-sentence'), ss); return; }
   const sg = e.target.closest('[data-seg]');
   if (sg && SEG_REG[+sg.getAttribute('data-seg')]) { openWordSheet(SEG_REG[+sg.getAttribute('data-seg')]); return; }
   if (e.target.closest('[data-close-sheet]')) hideSheets();
@@ -638,7 +641,7 @@ function judge() {
   // feedback content
   let pair = '';
   if (q.type === 'sentence') {
-    pair = `<div class="fb-pair"><div class="q-zh" style="font-size:19px">${segHTML(q.line)}</div>
+    pair = `<div class="fb-pair"><div class="q-zh fb-sentence" data-speak-sentence="${esc(q.line.zh)}" style="font-size:19px" title="タップで音声再生">${segHTML(q.line)}</div>
       ${store.data.settings.pinyin ? `<div class="q-py">${esc(q.line.py)}</div>` : ''}
       <div class="jp">${esc(q.line.jp)}</div>
       <div style="margin-top:6px">${speakBtn(q.line.zh)}</div></div>`;

@@ -111,6 +111,8 @@ h2.sec-title::before{content:"";display:inline-block;width:9px;height:9px;backgr
 .seg{display:inline-block;padding:0 1px;border-bottom:1px dotted #55555f;border-radius:3px}
 .q-zh span,.r-zh span{transition:background-color .15s ease}
 .q-zh span.hl,.r-zh span.hl{background:rgba(247,209,23,.38);border-radius:3px}
+.fb-sentence{cursor:pointer}
+.fb-sentence::before{content:'🔊';font-size:13px;margin-right:6px;opacity:.8}
 .speak-btn.playing,.speak-big.playing{animation:spk-pulse .9s ease-in-out infinite}
 @keyframes spk-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
 .seg:active{background:#33333f}

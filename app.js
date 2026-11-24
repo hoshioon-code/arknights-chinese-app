@@ -477,7 +477,7 @@ function epWordPool(ep) {
   const map = {};
   for (const l of ep.lines) for (const s of l.seg || []) {
     const [w, py, cls, gloss] = s;
-    if (w.length >= 2 && gloss && !map[w]) map[w] = { w, py, cls, gloss, kind: wordKindMap[w] || 'general', exZh: l.zh, exJp: l.jp };
+    if (w.length >= 2 && gloss && !map[w]) map[w] = { w, py, cls, gloss, kind: wordKindMap[w] || 'general', exZh: l.zh, exJp: l.jp, exLine: l };
   }
   return Object.values(map);
 }
@@ -704,9 +704,12 @@ function judge() {
       <div style="margin-top:6px">${speakBtn(q.line.zh)}</div></div>`;
   } else if (q.type === 'word') {
     const w = q.word;
+    const exHtml = !w.exZh ? '' : (w.exLine
+      ? `<div class="ws-ex">例文：<div class="q-zh" style="font-size:16px">${segHTML(w.exLine)}</div><div class="muted" style="margin-top:4px">${esc(w.exJp)}</div><div style="margin-top:4px">${speakBtn(w.exZh)}</div></div>`
+      : `<div class="ws-ex">例文：${esc(w.exZh)}<br><span class="muted">${esc(w.exJp)}</span><div style="margin-top:4px">${speakBtn(w.exZh)}</div></div>`);
     pair = `<div class="fb-pair"><b style="font-size:19px">${esc(w.w)}</b> <span class="q-py">${esc(w.py)}</span> — ${esc(w.gloss)}
       <div style="margin-top:6px">${speakBtn(w.w)}</div>
-      ${w.exZh ? `<div class="ws-ex">例文：${esc(w.exZh)}<br><span class="muted">${esc(w.exJp)}</span></div>` : ''}</div>`;
+      ${exHtml}</div>`;
   } else {
     const t = q.term;
     pair = `<div class="fb-pair"><b style="font-size:19px">${esc(t.zh)}</b> <span class="q-py">${esc(t.py)}</span> — ${esc(t.jp)}

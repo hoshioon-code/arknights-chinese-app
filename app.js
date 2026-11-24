@@ -178,6 +178,7 @@ function openWordSheet(seg) {
       <button class="btn btn-ghost" data-close-sheet>閉じる</button>
     </div>`;
   showSheet('word-sheet');
+  if (hasAudio(w)) playText(w);
 }
 
 // ---------------- sheets ----------------

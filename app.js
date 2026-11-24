@@ -796,6 +796,8 @@ function renderQuestion() {
     L.sel = +b.getAttribute('data-choice');
     $view.querySelectorAll('[data-choice]').forEach(x => x.classList.toggle('sel', +x.getAttribute('data-choice') === L.sel));
     document.getElementById('btn-check').disabled = false;
+    const c = q.choices[L.sel];
+    if (c && hasAudio(c.label)) playText(c.label);
   }));
   document.getElementById('btn-check').addEventListener('click', judge);
 }

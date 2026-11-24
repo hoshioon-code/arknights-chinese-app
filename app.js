@@ -43,9 +43,11 @@ const store = {
     if (!this.data.settings) this.data.settings = { pinyin: true, pos: true };
   },
   save() {
+    this.data.updatedAt = Date.now();
     let json = null;
     try { json = JSON.stringify(this.data); localStorage.setItem(LS_KEY, json); } catch (e) {}
     if (json) idbSetState(json);
+    scheduleSyncPush();
   },
   touchStreak() {
     const today = new Date(); const key = today.toISOString().slice(0, 10);
@@ -195,6 +197,7 @@ document.getElementById('btn-settings').addEventListener('click', () => {
   document.getElementById('set-pinyin').checked = store.data.settings.pinyin;
   document.getElementById('set-pos').checked = store.data.settings.pos;
   document.getElementById('report-count').textContent = loadReports().length;
+  setSyncStatus(syncCfg().token ? '同期は有効です（開くたび・記録の保存のたびに自動同期します）' : '同期は未設定です');
   showSheet('settings-sheet');
 });
 document.getElementById('settings-close').addEventListener('click', hideSheets);
@@ -237,6 +240,7 @@ document.getElementById('report-send').addEventListener('click', () => {
   const reports = loadReports();
   reports.push({ ts: new Date().toISOString(), category: reportCat, comment: document.getElementById('report-comment').value.trim(), question: questionSummary() });
   try { localStorage.setItem(REPORTS_KEY, JSON.stringify(reports)); } catch (e) {}
+  scheduleSyncPush();
   hideSheets();
   toast('報告を保存しました。ありがとうございます！');
 });
@@ -248,6 +252,86 @@ document.getElementById('btn-copy-reports').addEventListener('click', async () =
   try { await navigator.clipboard.writeText(text); msgEl.textContent = '報告をコピーしました。チャットに貼って送ってください。'; }
   catch (e) { msgEl.textContent = 'コピーできませんでした。'; }
 });
+
+// ---- personal cloud sync: progress + reports in the user's private GitHub repo.
+// The token lives only in this device's localStorage; it is never in the app code.
+const SYNC_KEY = 'akcn-sync-v1';
+const SYNC_REPO = 'hoshioon-code/arknights-chinese-data';
+function syncCfg() { try { return JSON.parse(localStorage.getItem(SYNC_KEY)) || {}; } catch (e) { return {}; } }
+function b64enc(str) { const bytes = new TextEncoder().encode(str); let bin = ''; bytes.forEach(b => { bin += String.fromCharCode(b); }); return btoa(bin); }
+function b64dec(b64) { const bin = atob(String(b64).replace(/\s/g, '')); const bytes = Uint8Array.from(bin, c => c.charCodeAt(0)); return new TextDecoder().decode(bytes); }
+async function ghContents(path, method, body) {
+  const { token } = syncCfg();
+  if (!token) throw new Error('トークン未設定');
+  const res = await fetch(`https://api.github.com/repos/${SYNC_REPO}/contents/${path}`, {
+    method: method || 'GET',
+    headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', ...(body ? { 'Content-Type': 'application/json' } : {}) },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error('GitHub ' + res.status);
+  return res.json();
+}
+async function syncGet(path) {
+  const r = await ghContents(path);
+  if (!r) return null;
+  return { sha: r.sha, obj: JSON.parse(b64dec(r.content)) };
+}
+async function syncPut(path, obj, sha, msg) {
+  const body = { message: msg, content: b64enc(JSON.stringify(obj, null, 1)) };
+  if (sha) body.sha = sha;
+  return ghContents(path, 'PUT', body);
+}
+let syncTimer = null, syncBusy = false, syncQueued = false;
+function scheduleSyncPush() {
+  try {
+    if (!syncCfg().token) return;
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => { syncNow(false); }, 3000);
+  } catch (e) {}
+}
+function setSyncStatus(txt) { const el = document.getElementById('sync-status'); if (el) el.textContent = txt; }
+async function syncNow(manual) {
+  if (!syncCfg().token) { if (manual) setSyncStatus('トークンが未設定です。'); return; }
+  if (syncBusy) { syncQueued = true; return; }
+  syncBusy = true;
+  setSyncStatus('同期中…');
+  try {
+    // progress: the newer side (by updatedAt) wins
+    const remoteP = await syncGet('progress.json');
+    const localAt = store.data.updatedAt || 0;
+    if (remoteP && remoteP.obj && typeof remoteP.obj.updatedAt === 'number' && remoteP.obj.updatedAt > localAt
+      && typeof remoteP.obj.xp === 'number' && remoteP.obj.done && typeof remoteP.obj.done === 'object') {
+      store.data = { xp: 0, streakLast: '', streakCount: 0, done: {}, mistakes: [], settings: { pinyin: true, pos: true }, ...remoteP.obj };
+      try { const j = JSON.stringify(store.data); localStorage.setItem(LS_KEY, j); idbSetState(j); } catch (e) {}
+      rerender();
+    }
+    await syncPut('progress.json', store.data, remoteP ? remoteP.sha : undefined, 'Sync progress');
+    // reports: union merge (append-only on both sides)
+    const remoteR = await syncGet('reports.json');
+    const localReports = loadReports();
+    const rkey = r => r.ts + '|' + r.question;
+    const seen = new Set(localReports.map(rkey));
+    const merged = localReports.slice();
+    if (remoteR && Array.isArray(remoteR.obj)) for (const r of remoteR.obj) if (!seen.has(rkey(r))) { merged.push(r); seen.add(rkey(r)); }
+    merged.sort((a, b) => (a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0));
+    if (JSON.stringify(merged) !== JSON.stringify(localReports)) { try { localStorage.setItem(REPORTS_KEY, JSON.stringify(merged)); } catch (e) {} }
+    await syncPut('reports.json', merged, remoteR ? remoteR.sha : undefined, 'Sync reports');
+    setSyncStatus('同期済み：' + new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }));
+  } catch (e) {
+    setSyncStatus('同期エラー（' + e.message + '）。トークンとネット接続を確認してください。');
+  }
+  syncBusy = false;
+  if (syncQueued) { syncQueued = false; scheduleSyncPush(); }
+}
+document.getElementById('btn-sync-save').addEventListener('click', () => {
+  const tok = document.getElementById('sync-token').value.trim();
+  if (!tok) { setSyncStatus('トークンを入力してください。'); return; }
+  try { localStorage.setItem(SYNC_KEY, JSON.stringify({ token: tok })); } catch (e) {}
+  document.getElementById('sync-token').value = '';
+  syncNow(true);
+});
+document.getElementById('btn-sync-now').addEventListener('click', () => syncNow(true));
 
 // ---- backup: export / import learning records ----
 document.getElementById('btn-export').addEventListener('click', () => {
@@ -820,6 +904,7 @@ async function renderReader(epId) {
   }
   renderStats();
   renderHome();
+  if (syncCfg().token) syncNow(false);
 })();
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));

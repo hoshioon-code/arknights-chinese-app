@@ -91,6 +91,12 @@
     <p class="sheet-note">レッスン中の「この問題を報告する」から送った報告は、この端末に保存されます（<span id="report-count">0</span>件）。コピーしてチャットで私に送ってもらえると、内容を確認できます。</p>
     <button class="btn btn-ghost" id="btn-copy-reports" style="width:100%">報告をコピーする</button>
     <p class="sheet-note" id="report-copy-msg" role="status"></p>
+    <h3 class="sheet-title" style="font-size:15px;margin-top:14px">個人データ同期（自分専用）</h3>
+    <p class="sheet-note">あなたの非公開GitHubリポジトリ「arknights-chinese-data」に、進行状況と問題報告を自動で保存します。Safariで開いてもホーム画面アプリで開いても、同じ記録が戻ります。トークンはこの端末の中だけに保存され、アプリのコードには含まれません。</p>
+    <input type="password" id="sync-token" placeholder="GitHubトークンを貼り付け" autocomplete="off">
+    <button class="btn btn-ghost" id="btn-sync-save" style="width:100%;margin:8px 0">トークンを保存して同期を有効化</button>
+    <button class="btn btn-ghost" id="btn-sync-now" style="width:100%">今すぐ同期</button>
+    <p class="sheet-note" id="sync-status" role="status"></p>
     <button class="btn btn-ghost" id="settings-close">閉じる</button>
   </section>
 </div>

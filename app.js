@@ -271,11 +271,11 @@ function renderReportsList() {
 }
 document.getElementById('btn-reports-open').addEventListener('click', () => { renderReportsList(); showSheet('reports-sheet'); });
 document.getElementById('btn-copy-reports').addEventListener('click', async () => {
-  const reports = loadReports().filter(r => !r.resolved);
+  const n = loadReports().filter(r => !r.resolved).length;
   const msgEl = document.getElementById('report-copy-msg');
-  if (!reports.length) { msgEl.textContent = '未解決の報告はありません。'; return; }
-  const text = reports.map(r => `【${r.ts.slice(0, 10)}】${r.category}\n${r.question}${r.comment ? '\nコメント: ' + r.comment : ''}`).join('\n\n');
-  try { await navigator.clipboard.writeText(text); msgEl.textContent = '未解決の報告をコピーしました。チャットに貼って送ってください。'; }
+  if (!n) { msgEl.textContent = '未解決の報告はありません。'; return; }
+  const text = `中国語アプリの問題報告を確認してほしいな。未解決の報告が${n}件あるよ。私の非公開GitHubリポジトリ「arknights-chinese-data」の reports.json に入ってるから、未解決のものの内容を確認して、直せるものは直してほしい。直したものと、直せなかったものは教えてね。`;
+  try { await navigator.clipboard.writeText(text); msgEl.textContent = '確認メッセージをコピーしました。Museとのチャットに貼って送ってください。'; }
   catch (e) { msgEl.textContent = 'コピーできませんでした。'; }
 });
 

@@ -491,8 +491,36 @@ async function renderHome() {
       <button class="tab ${UI.tab === 'terms' ? 'active' : ''}" data-tab="terms">用語ステージ</button>
     </div>`;
   if (UI.tab === 'story') {
+    // accordion: which chapters are open (persisted per device; default = the
+    // first chapter that still has an uncleared stage)
+    let openSet = null;
+    try { const raw = localStorage.getItem('akcn-open-chapters'); if (raw) openSet = new Set(JSON.parse(raw)); } catch (e) {}
+    if (!openSet) {
+      let cur = null;
+      for (const ch of META.chapters) {
+        const hasOpen = ch.episodes.some(ep => {
+          const s = store.data.done['s:' + ep.id], w = store.data.done['w:' + ep.id];
+          return !(s && s.cleared) || !(w && w.cleared);
+        });
+        if (hasOpen) { cur = ch; break; }
+      }
+      openSet = new Set([(cur || META.chapters[META.chapters.length - 1]).id]);
+    }
     for (const ch of META.chapters) {
-      html += `<div class="chapter-head"><span class="ch-name">${esc(ch.name)}</span><span class="ch-name-jp">${esc(ch.nameJp)}</span></div><div class="path">`;
+      const totalStages = ch.episodes.length * 2;
+      let clearedStages = 0;
+      for (const ep of ch.episodes) for (const k of ['s', 'w']) {
+        const d = store.data.done[k + ':' + ep.id];
+        if (d && d.cleared) clearedStages++;
+      }
+      const open = openSet.has(ch.id);
+      html += `<div class="chapter">
+        <button class="chapter-head" data-ch-toggle="${ch.id}" aria-expanded="${open}">
+          <span class="ch-chev">${open ? '▾' : '▸'}</span>
+          <span class="ch-name">${esc(ch.name)}</span><span class="ch-name-jp">${esc(ch.nameJp)}</span>
+          <span class="ch-prog">${clearedStages}/${totalStages} クリア</span>
+        </button>
+        <div class="chapter-body" ${open ? '' : 'hidden'}><div class="path">`;
       let nodeIdx = 0;
       ch.episodes.forEach((ep, i) => {
         const title = (ep.code ? ep.code + ' ' : '') + ep.name;
@@ -511,7 +539,7 @@ async function renderHome() {
             </div>`;
         }
       });
-      html += '</div>' + audioBoxHTML(ch.id);
+      html += '</div>' + audioBoxHTML(ch.id) + '</div></div>';
     }
   } else {
     html += audioBoxHTML('common');
@@ -531,6 +559,18 @@ async function renderHome() {
     }
   }
   $view.innerHTML = html;
+  $view.querySelectorAll('[data-ch-toggle]').forEach(b => b.addEventListener('click', () => {
+    const id = b.getAttribute('data-ch-toggle');
+    const body = b.parentElement.querySelector('.chapter-body');
+    const nowOpen = body.hidden;
+    body.hidden = !nowOpen;
+    b.setAttribute('aria-expanded', String(nowOpen));
+    b.querySelector('.ch-chev').textContent = nowOpen ? '▾' : '▸';
+    let set = new Set();
+    try { set = new Set(JSON.parse(localStorage.getItem('akcn-open-chapters') || '[]')); } catch (e) {}
+    if (nowOpen) set.add(id); else set.delete(id);
+    try { localStorage.setItem('akcn-open-chapters', JSON.stringify([...set])); } catch (e) {}
+  }));
   $view.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => { UI.tab = b.getAttribute('data-tab'); renderHome(); }));
   $view.querySelectorAll('[data-stage]').forEach(b => b.addEventListener('click', () => startStage(b.getAttribute('data-stage'))));
   $view.querySelectorAll('[data-reader]').forEach(a => a.addEventListener('click', ev => { ev.preventDefault(); openReader(a.getAttribute('data-reader')); }));

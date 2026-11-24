@@ -3,14 +3,50 @@
 
 // ---------------- store ----------------
 const LS_KEY = 'akcn_pwa_v1';
+// IndexedDB mirror of the store JSON (survives localStorage/container resets
+// more often than localStorage alone on iOS). DB 'akcn-store', store 'kv', key 'state'.
+let _idbP = null;
+function idbOpen() {
+  if (_idbP) return _idbP;
+  _idbP = new Promise((resolve, reject) => {
+    try {
+      const req = indexedDB.open('akcn-store', 1);
+      req.onupgradeneeded = () => { req.result.createObjectStore('kv'); };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    } catch (e) { reject(e); }
+  });
+  return _idbP;
+}
+async function idbGetState() {
+  const db = await idbOpen();
+  return new Promise((resolve, reject) => {
+    const rq = db.transaction('kv', 'readonly').objectStore('kv').get('state');
+    rq.onsuccess = () => resolve(rq.result || null);
+    rq.onerror = () => reject(rq.error);
+  });
+}
+function idbSetState(json) {
+  // fire-and-forget mirror write; failures must never break saving
+  idbOpen().then(db => {
+    try { db.transaction('kv', 'readwrite').objectStore('kv').put(json, 'state'); } catch (e) {}
+  }).catch(() => {});
+}
 const store = {
   data: null,
+  hadLS: false,
   load() {
-    try { this.data = JSON.parse(localStorage.getItem(LS_KEY)) || null; } catch (e) { this.data = null; }
+    let raw = null;
+    try { raw = localStorage.getItem(LS_KEY); this.data = JSON.parse(raw) || null; } catch (e) { this.data = null; }
+    this.hadLS = !!raw;
     if (!this.data) this.data = { xp: 0, streakLast: '', streakCount: 0, done: {}, mistakes: [], settings: { pinyin: true, pos: true } };
     if (!this.data.settings) this.data.settings = { pinyin: true, pos: true };
   },
-  save() { try { localStorage.setItem(LS_KEY, JSON.stringify(this.data)); } catch (e) {} },
+  save() {
+    let json = null;
+    try { json = JSON.stringify(this.data); localStorage.setItem(LS_KEY, json); } catch (e) {}
+    if (json) idbSetState(json);
+  },
   touchStreak() {
     const today = new Date(); const key = today.toISOString().slice(0, 10);
     if (this.data.streakLast === key) return;
@@ -134,7 +170,7 @@ function openWordSheet(seg) {
     <div><span class="ws-word">${esc(w)}</span><span class="ws-py">${esc(py)}</span></div>
     <span class="ws-pos lg lg-${cls}">${POS_LABEL[cls] || 'その他'}</span>
     ${kind ? `<span class="badge ${KIND_BADGE[kind][1]}">${KIND_BADGE[kind][0]}</span>` : ''}
-    <div class="ws-gloss">${gloss ? esc(gloss) : '<span class="muted">（意味データなし）</span>'}</div>
+    ${gloss ? `<div class="ws-gloss">${esc(gloss)}</div>` : ''}
     ${ex}
     <div class="ws-actions">
       ${hasAudio(w) ? `<button class="btn" data-speak="${esc(w)}">🔊 音声を聞く</button>` : ''}
@@ -161,6 +197,39 @@ document.getElementById('btn-settings').addEventListener('click', () => {
 document.getElementById('settings-close').addEventListener('click', hideSheets);
 document.getElementById('set-pinyin').addEventListener('change', e => { store.data.settings.pinyin = e.target.checked; store.save(); rerender(); });
 document.getElementById('set-pos').addEventListener('change', e => { store.data.settings.pos = e.target.checked; store.save(); rerender(); });
+
+// ---- backup: export / import learning records ----
+document.getElementById('btn-export').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(store.data, null, 1)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'arknights-cn-backup.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  document.getElementById('backup-msg').textContent = '記録をファイルに書き出しました。';
+});
+const importFileEl = document.getElementById('import-file');
+document.getElementById('btn-import').addEventListener('click', () => importFileEl.click());
+importFileEl.addEventListener('change', async () => {
+  const f = importFileEl.files && importFileEl.files[0];
+  if (!f) return;
+  const msg = document.getElementById('backup-msg');
+  try {
+    const obj = JSON.parse(await f.text());
+    if (!obj || typeof obj !== 'object' || typeof obj.xp !== 'number' || !obj.done || typeof obj.done !== 'object') throw new Error('invalid backup');
+    store.data = obj;
+    if (!store.data.settings) store.data.settings = { pinyin: true, pos: true };
+    if (!Array.isArray(store.data.mistakes)) store.data.mistakes = [];
+    store.save();
+    document.getElementById('set-pinyin').checked = !!store.data.settings.pinyin;
+    document.getElementById('set-pos').checked = !!store.data.settings.pos;
+    msg.textContent = '記録を読み込みました。';
+    rerender();
+  } catch (e) {
+    msg.textContent = '読み込みに失敗しました。バックアップファイルを確認してください。';
+  }
+  importFileEl.value = '';
+});
 
 // global click delegation for speak buttons / segment taps / sheet close
 document.addEventListener('click', e => {
@@ -558,6 +627,7 @@ function judge() {
   } else {
     if (!L.review) { L.hearts--; addMistake(q.mistake); }
   }
+  store.save(); // persist progress/mistakes at every judgement, not only at lesson end
   $view.querySelectorAll('[data-choice]').forEach((b, i) => {
     b.classList.remove('sel');
     if (q.choices[i].ok) b.classList.add('right');
@@ -672,8 +742,22 @@ async function renderReader(epId) {
 }
 
 // ---------------- boot ----------------
-renderStats();
-renderHome();
+(async () => {
+  // ask the browser to keep this origin's storage persistent (best effort)
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+  // if localStorage was wiped but the IndexedDB mirror survived, restore from it
+  if (!store.hadLS) {
+    try {
+      const raw = await idbGetState();
+      if (raw) {
+        try { localStorage.setItem(LS_KEY, raw); } catch (e) {}
+        store.load();
+      }
+    } catch (e) {}
+  }
+  renderStats();
+  renderHome();
+})();
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }

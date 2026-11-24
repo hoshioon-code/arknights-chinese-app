@@ -545,11 +545,11 @@ async function renderHome() {
       const open = openSet.has(ch.id);
       html += `<div class="chapter">
         <button class="chapter-head" data-ch-toggle="${ch.id}" aria-expanded="${open}">
-          <span class="ch-chev">${open ? '▾' : '▸'}</span>
+          <span class="ch-chev">▾</span>
           <span class="ch-name">${esc(ch.name)}</span><span class="ch-name-jp">${esc(ch.nameJp)}</span>
           <span class="ch-prog">${clearedStages}/${totalStages} クリア</span>
         </button>
-        <div class="chapter-body" ${open ? '' : 'hidden'}><div class="path">`;
+        <div class="chapter-body ${open ? 'open' : ''}"><div class="chapter-inner"><div class="path">`;
       let nodeIdx = 0;
       ch.episodes.forEach((ep, i) => {
         const title = (ep.code ? ep.code + ' ' : '') + ep.name;
@@ -568,7 +568,7 @@ async function renderHome() {
             </div>`;
         }
       });
-      html += '</div>' + audioBoxHTML(ch.id) + '</div></div>';
+      html += '</div>' + audioBoxHTML(ch.id) + '</div></div></div>';
     }
   } else {
     html += audioBoxHTML('common');
@@ -591,10 +591,9 @@ async function renderHome() {
   $view.querySelectorAll('[data-ch-toggle]').forEach(b => b.addEventListener('click', () => {
     const id = b.getAttribute('data-ch-toggle');
     const body = b.parentElement.querySelector('.chapter-body');
-    const nowOpen = body.hidden;
-    body.hidden = !nowOpen;
+    const nowOpen = !body.classList.contains('open');
+    body.classList.toggle('open', nowOpen);
     b.setAttribute('aria-expanded', String(nowOpen));
-    b.querySelector('.ch-chev').textContent = nowOpen ? '▾' : '▸';
     let set = new Set();
     try { set = new Set(JSON.parse(localStorage.getItem('akcn-open-chapters') || '[]')); } catch (e) {}
     if (nowOpen) set.add(id); else set.delete(id);

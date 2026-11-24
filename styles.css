@@ -71,7 +71,28 @@ h2.sec-title::before{content:"";display:inline-block;width:9px;height:9px;backgr
 .chapter-head .ch-name{font-size:16px;font-weight:800}
 .chapter-head .ch-name-jp{color:var(--muted);font-size:12px}
 .chapter-head .ch-prog{margin-left:auto;font-size:12px;color:var(--muted);flex:none}
-.chapter-body{padding-top:2px}
+.chapter-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .34s ease}
+.chapter-body.open{grid-template-rows:1fr}
+.chapter-inner{overflow:hidden;min-height:0;padding-top:2px}
+.ch-chev{display:inline-block;transition:transform .25s ease}
+.chapter-head[aria-expanded="false"] .ch-chev{transform:rotate(-90deg)}
+.chapter-head{transition:background-color .18s ease,transform .12s ease}
+.chapter-head:active{transform:scale(.99)}
+.choice,.node,.btn,.tab,.term-sec,.icon-btn,.speak-btn,.speak-big{transition:transform .12s ease,background-color .18s ease,border-color .18s ease,color .18s ease,filter .18s ease}
+.choice:active,.node:active,.term-sec:active{transform:scale(.96)}
+.btn:active{transform:scale(.98)}
+.tab:active,.icon-btn:active,.speak-btn:active,.speak-big:active{transform:scale(.92)}
+.sheet:not(.hidden){animation:sheetIn .3s cubic-bezier(.2,.9,.25,1)}
+#sheet-backdrop:not(.hidden){animation:fadeIn .25s ease}
+#toast:not(.hidden){animation:fadeIn .2s ease}
+.q-card{animation:qIn .26s ease}
+.feedback{animation:fbIn .3s ease}
+.result-card{animation:fbIn .35s ease}
+@keyframes sheetIn{from{transform:translate(-50%,26px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes qIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes fbIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 .path{display:flex;flex-direction:column;align-items:center;gap:0;padding:8px 0}
 .node-wrap{display:flex;flex-direction:column;align-items:center;transform:translateX(var(--dx,0px))}
 .node{width:76px;height:76px;border:3px solid var(--line);background:var(--panel2);color:var(--text);

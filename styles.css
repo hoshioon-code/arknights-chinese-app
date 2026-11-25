@@ -146,6 +146,9 @@ h2.sec-title::before{content:"";display:inline-block;width:9px;height:9px;backgr
 #report-comment{width:100%;box-sizing:border-box;border:1px solid rgba(127,127,140,.45);border-radius:8px;background:none;color:inherit;padding:10px;font-size:14px;margin-bottom:10px}
 #sync-token{width:100%;box-sizing:border-box;border:1px solid rgba(127,127,140,.45);border-radius:8px;background:none;color:inherit;padding:10px;font-size:14px}
 .report-row{border:1px solid rgba(127,127,140,.3);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.next-lesson{margin:20px 0 10px;padding:15px 16px;line-height:1.35}
+.next-lesson span{display:block;font-size:13px;font-weight:600;opacity:.85;margin-top:2px}
+.all-clear{text-align:center;padding:20px 10px;color:var(--muted,#9a9aa5);font-weight:700}
 .report-row.resolved{opacity:.55}
 .rr-head{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
 .rr-cat{font-weight:700;color:#f7d117}

@@ -279,6 +279,19 @@ function renderReportsList() {
     document.getElementById('report-count').textContent = loadReports().filter(x => !x.resolved).length;
   }));
 }
+document.getElementById('btn-refresh').addEventListener('click', async () => {
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.unregister()));
+    }
+    if (window.caches) {
+      const keys = await caches.keys();
+      await Promise.all(keys.filter(k => k.indexOf('akcn-shell') === 0).map(k => caches.delete(k)));
+    }
+  } catch (e) {}
+  location.replace(location.pathname + '?refresh=' + Date.now());
+});
 document.getElementById('btn-reports-open').addEventListener('click', () => { renderReportsList(); showSheet('reports-sheet'); });
 document.getElementById('btn-copy-reports').addEventListener('click', async () => {
   const n = loadReports().filter(r => !r.resolved).length;
@@ -579,6 +592,20 @@ async function renderHome() {
       });
       html += '</div>' + audioBoxHTML(ch.id) + '</div></div></div>';
     }
+    // next-lesson shortcut at the bottom of home
+    let nextId = null, nextLabel = '';
+    outer: for (const ch of META.chapters) {
+      for (const ep of ch.episodes) {
+        for (const pair of [['s', '文章'], ['w', '単語']]) {
+          const stId = pair[0] + ':' + ep.id;
+          const d = store.data.done[stId];
+          if (!(d && d.cleared)) { nextId = stId; nextLabel = `${ch.name} ${(ep.code ? ep.code + ' ' : '') + ep.name} ・ ${pair[1]}`; break outer; }
+        }
+      }
+    }
+    html += nextId
+      ? `<button class="btn next-lesson" data-next="${nextId}">▶ 次のレッスン<span>${esc(nextLabel)}</span></button>`
+      : `<div class="all-clear">全ステージクリア！おつかれさま🎉</div>`;
   } else {
     html += audioBoxHTML('common');
     for (const cat of TERMS.categories) {
@@ -608,6 +635,8 @@ async function renderHome() {
     if (nowOpen) set.add(id); else set.delete(id);
     try { localStorage.setItem('akcn-open-chapters', JSON.stringify([...set])); } catch (e) {}
   }));
+  const nb = $view.querySelector('[data-next]');
+  if (nb) nb.addEventListener('click', () => startStage(nb.getAttribute('data-next')));
   $view.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => { UI.tab = b.getAttribute('data-tab'); renderHome(); }));
   $view.querySelectorAll('[data-stage]').forEach(b => b.addEventListener('click', () => startStage(b.getAttribute('data-stage'))));
   $view.querySelectorAll('[data-reader]').forEach(a => a.addEventListener('click', ev => { ev.preventDefault(); openReader(a.getAttribute('data-reader')); }));
@@ -985,6 +1014,7 @@ async function renderReader(epId) {
   renderHome();
   if (syncCfg().token) syncNow(false);
 })();
+if (/[?&]refresh=/.test(location.search)) { try { history.replaceState(null, '', location.pathname); } catch (e) {} }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }

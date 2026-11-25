@@ -604,7 +604,7 @@ async function renderHome() {
       }
     }
     html += nextId
-      ? `<button class="btn next-lesson" data-next="${nextId}">▶ 次のレッスン<span>${esc(nextLabel)}</span></button>`
+      ? `<div class="next-space"></div><div class="next-bar"><button class="btn next-lesson" data-next="${nextId}">▶ 次のレッスン<span>${esc(nextLabel)}</span></button></div>`
       : `<div class="all-clear">全ステージクリア！おつかれさま🎉</div>`;
   } else {
     html += audioBoxHTML('common');

@@ -29,7 +29,7 @@ button{font-family:inherit;cursor:pointer}
 .tb-title{font-weight:800;font-size:15px;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tb-right{display:flex;align-items:center;gap:6px}
 .stat-chip{display:flex;align-items:center;gap:4px;background:var(--panel2);border:1px solid var(--line);
-  padding:4px 8px;font-size:12px;font-weight:700;border-radius:4px}
+  padding:4px 8px;font-size:12px;font-weight:700;border-radius:4px;white-space:nowrap;flex:none}
 .stat-ico{color:var(--yellow);font-size:11px}
 .icon-btn{background:var(--panel2);border:1px solid var(--line);color:var(--text);
   width:34px;height:34px;font-size:17px;border-radius:4px}

@@ -65,7 +65,7 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function sample(a, n) { return shuffle(a).slice(0, n); }
 const KIND_BADGE = { general: ['一般語', 'badge-general'], proper: ['固有名詞', 'badge-proper'], term: ['専門用語', 'badge-term'] };
-const APP_VERSION = 26; // keep in sync with the SW shell version (akcn-shell-v26)
+const APP_VERSION = 27; // keep in sync with the SW shell version (akcn-shell-v27)
 const POS_LABEL = { noun: '名詞', verb: '動詞', adj: '形容詞', adv: '副詞', pron: '代名詞', other: 'その他' };
 
 // ---------------- data ----------------
@@ -85,6 +85,8 @@ async function loadCore() {
     for (const v of VOCAB) { vocabMap[v.w] = v; wordKindMap[v.w] = v.kind; }
     for (const c of TERMS.categories) for (const s of c.sections) for (const t of s.terms)
       if (!(t.zh in wordKindMap)) wordKindMap[t.zh] = t.kind;
+    // user-reported classification fixes
+    wordKindMap['整合运动'] = 'proper'; // レユニオン (organization), not a general word
   }
 }
 async function loadChapter(chId) {
@@ -293,7 +295,7 @@ document.getElementById('btn-refresh').addEventListener('click', async () => {
   } catch (e) {}
   location.replace(location.pathname + '?refresh=' + Date.now());
 });
-document.getElementById('btn-reports-open').addEventListener('click', () => { renderReportsList(); showSheet('reports-sheet'); });
+document.getElementById('btn-reports-open').addEventListener('click', () => { renderReportsList(); hideSheets(); showSheet('reports-sheet'); });
 document.getElementById('btn-copy-reports').addEventListener('click', async () => {
   const n = loadReports().filter(r => !r.resolved).length;
   const msgEl = document.getElementById('report-copy-msg');
@@ -664,17 +666,18 @@ function buildSentenceQuestions(ep, chapterPool) {
     return { type: 'sentence', dir, line: l, epId: ep.id, choices, mistake: { t: 's', ep: ep.id, line: l.idx } };
   });
 }
+const EXCLUDE_WORDS = new Set(['Dr']); // user asked to drop these from word questions
 function epWordPool(ep) {
   const map = {};
   for (const l of ep.lines) for (const s of l.seg || []) {
     const [w, py, cls, gloss] = s;
-    if (w.length >= 2 && gloss && !map[w]) map[w] = { w, py, cls, gloss, kind: wordKindMap[w] || 'general', exZh: l.zh, exJp: l.jp, exLine: l };
+    if (w.length >= 2 && gloss && !EXCLUDE_WORDS.has(w) && !map[w]) map[w] = { w, py, cls, gloss, kind: wordKindMap[w] || 'general', exZh: l.zh, exJp: l.jp, exLine: l };
   }
   return Object.values(map);
 }
 function wordQuestions(pool, makeMistake) {
   const qs = [];
-  const usable = pool.filter(p => p.gloss);
+  const usable = pool.filter(p => p.gloss && !EXCLUDE_WORDS.has(p.w));
   if (usable.length < 4) return qs;
   const picks = sample(usable, Math.min(10, usable.length));
   const formats = ['listen', 'w2m', 'm2w'];

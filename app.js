@@ -179,9 +179,14 @@ function openWordSheet(seg) {
     <div class="ws-actions">
       ${hasAudio(w) ? `<button class="btn" data-speak="${esc(w)}">🔊 音声を聞く</button>` : ''}
       <button class="btn btn-ghost" data-close-sheet>閉じる</button>
-    </div>`;
+    </div>
+    <button class="btn btn-ghost" id="ws-report" style="width:100%;margin-top:8px">⚠ この単語を報告する</button>`;
   showSheet('word-sheet');
   if (hasAudio(w)) playText(w);
+  document.getElementById('ws-report').addEventListener('click', () => {
+    reportCtx = `単語の報告\n単語: ${w}（${py}）\n品詞: ${POS_LABEL[cls] || 'その他'}\n意味: ${gloss || '（なし）'}${L ? '\n表示中の問題: ' + questionSummary().split('\n')[0] : ''}`;
+    openReport();
+  });
 }
 
 // ---------------- sheets ----------------
@@ -224,12 +229,15 @@ function questionSummary() {
   return `${head}\n用語問題（${q.dir}）\n用語: ${q.term.zh}（${q.term.py}）= ${q.term.jp}`;
 }
 let reportCat = '';
+let reportCtx = null; // set when reporting a single word from the word sheet
+function currentReportTarget() { return reportCtx || questionSummary(); }
 function openReport() {
   reportCat = '';
   document.querySelectorAll('#report-cats button').forEach(b => b.classList.remove('sel'));
   document.getElementById('report-comment').value = '';
   document.getElementById('report-msg').textContent = '';
-  document.getElementById('report-target').textContent = questionSummary();
+  document.getElementById('report-target').textContent = currentReportTarget();
+  hideSheets();
   showSheet('report-sheet');
 }
 document.querySelectorAll('#report-cats button').forEach(b => b.addEventListener('click', () => {
@@ -239,7 +247,8 @@ document.querySelectorAll('#report-cats button').forEach(b => b.addEventListener
 document.getElementById('report-send').addEventListener('click', () => {
   if (!reportCat) { document.getElementById('report-msg').textContent = 'カテゴリを選んでください。'; return; }
   const reports = loadReports();
-  reports.push({ ts: new Date().toISOString(), category: reportCat, comment: document.getElementById('report-comment').value.trim(), question: questionSummary(), resolved: false });
+  reports.push({ ts: new Date().toISOString(), category: reportCat, comment: document.getElementById('report-comment').value.trim(), question: currentReportTarget(), resolved: false });
+  reportCtx = null;
   try { localStorage.setItem(REPORTS_KEY, JSON.stringify(reports)); } catch (e) {}
   scheduleSyncPush();
   hideSheets();
@@ -812,7 +821,7 @@ function renderQuestion() {
       <button class="btn" id="btn-check" disabled>答え合わせ</button>
     </div>
     <div class="report-bar"><button id="btn-report" class="report-btn">⚠ この問題を報告する</button></div>`;
-  $view.querySelector('#btn-report').addEventListener('click', openReport);
+  $view.querySelector('#btn-report').addEventListener('click', () => { reportCtx = null; openReport(); });
   // when the prompt itself is Chinese, play its audio as the question starts
   const auto = q.type === 'sentence' ? (q.dir === 'z2j' ? q.line.zh : null)
     : q.type === 'word' ? (q.dir === 'm2w' ? null : q.word.w)

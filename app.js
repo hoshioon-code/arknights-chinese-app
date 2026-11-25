@@ -65,23 +65,25 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function sample(a, n) { return shuffle(a).slice(0, n); }
 const KIND_BADGE = { general: ['一般語', 'badge-general'], proper: ['固有名詞', 'badge-proper'], term: ['専門用語', 'badge-term'] };
-const APP_VERSION = 27; // keep in sync with the SW shell version (akcn-shell-v27)
+const APP_VERSION = 28; // keep in sync with the SW shell version (akcn-shell-v28)
 const POS_LABEL = { noun: '名詞', verb: '動詞', adj: '形容詞', adv: '副詞', pron: '代名詞', other: 'その他' };
 
 // ---------------- data ----------------
 const cache = {};
 function loadJSON(url) { if (!cache[url]) cache[url] = fetch(url).then(r => { if (!r.ok) throw new Error(url); return r.json(); }); return cache[url]; }
-let META = null, TERMS = null, VOCAB = null, AUDIO_MAP = null, AUDIO_CH = null;
+let META = null, TERMS = null, VOCAB = null, AUDIO_MAP = null, AUDIO_CH = null, HSK = null, HSK_CAT = null;
 const epDataCache = {}; // chapterId -> data
 const wordKindMap = {};  // word -> kind
 const vocabMap = {};     // word -> vocab entry
 
 async function loadCore() {
   if (!META) {
-    [META, TERMS, VOCAB, AUDIO_MAP, AUDIO_CH] = await Promise.all([
+    [META, TERMS, VOCAB, AUDIO_MAP, AUDIO_CH, HSK] = await Promise.all([
       loadJSON('data/meta.json'), loadJSON('data/terms.json'),
       loadJSON('data/vocab.json'), loadJSON('data/audio_map.json'),
-      loadJSON('data/audio_chapters.json').catch(() => null)]);
+      loadJSON('data/audio_chapters.json').catch(() => null),
+      loadJSON('data/hsk.json').catch(() => null)]);
+    if (HSK) HSK_CAT = { id: 'hsk1', label: 'HSK1・300語', sections: HSK.sections };
     for (const v of VOCAB) { vocabMap[v.w] = v; wordKindMap[v.w] = v.kind; }
     for (const c of TERMS.categories) for (const s of c.sections) for (const t of s.terms)
       if (!(t.zh in wordKindMap)) wordKindMap[t.zh] = t.kind;
@@ -543,6 +545,7 @@ async function renderHome() {
     <div class="tabs">
       <button class="tab ${UI.tab === 'story' ? 'active' : ''}" data-tab="story">ストーリー</button>
       <button class="tab ${UI.tab === 'terms' ? 'active' : ''}" data-tab="terms">用語ステージ</button>
+      <button class="tab ${UI.tab === 'hsk' ? 'active' : ''}" data-tab="hsk">HSK1</button>
     </div>`;
   if (UI.tab === 'story') {
     // accordion: which chapters are open (persisted per device; default = the
@@ -609,6 +612,21 @@ async function renderHome() {
     html += nextId
       ? `<div class="next-space"></div><div class="next-bar"><button class="btn next-lesson" data-next="${nextId}">▶ 次のレッスン<span>${esc(nextLabel)}</span></button></div>`
       : `<div class="all-clear">全ステージクリア！おつかれさま🎉</div>`;
+  } else if (UI.tab === 'hsk') {
+    html += `<p class="sheet-note" style="margin:4px 0 10px">HSK 3.0のHSK1・全300語を、30語ずつのセットで学ぶステージです。聞き取り／単語→意味／意味→単語の3形式で出題します。</p>`;
+    html += audioBoxHTML('hsk1');
+    html += `<div class="term-grid">`;
+    for (const sec of (HSK ? HSK.sections : [])) {
+      const stId = `h:${sec.id}`;
+      const done = store.data.done[stId];
+      html += `
+        <button class="term-sec" data-stage="${stId}">
+          <div class="ts-name">${esc(sec.name)}</div>
+          <div class="ts-sub">${esc(sec.nameJp)} ・ ${sec.terms.length}語</div>
+          ${done ? `<div class="ts-best">ベスト ${done.best}/10${done.cleared ? ' ・ クリア' : ''}</div>` : ''}
+        </button>`;
+    }
+    html += '</div>';
   } else {
     html += audioBoxHTML('common');
     for (const cat of TERMS.categories) {
@@ -738,6 +756,9 @@ async function startStage(stageId) {
       const sec = cat.sections.find(s => s.id === rest);
       if (sec) { title = `${cat.label}：${sec.nameJp || sec.name}`; qs = buildTermQuestions(cat, sec); break; }
     }
+  } else if (kind === 'h' && HSK_CAT) {
+    const sec = HSK_CAT.sections.find(s => s.id === rest);
+    if (sec) { title = `HSK1：${sec.name}（${sec.nameJp}）`; qs = buildTermQuestions(HSK_CAT, sec); }
   }
   if (!qs.length) { alert('このステージの問題を生成できませんでした'); return; }
   L = { stageId, title, qs, idx: 0, hearts: 5, correct: 0, sel: -1, judged: false, review: false };
@@ -765,7 +786,8 @@ async function startReview() {
       const built = wordQuestions([target, ...others], () => m).filter(q => q.word.w === m.w);
       if (built.length) qs.push(built[0]);
     } else if (m.t === 't') {
-      for (const cat of TERMS.categories) {
+      const cats = HSK_CAT ? [...TERMS.categories, HSK_CAT] : TERMS.categories;
+      for (const cat of cats) {
         const sec = cat.sections.find(s => s.terms.some(t => t.zh === m.zh));
         if (sec) { const q = buildTermQuestions(cat, sec).find(q => q.term.zh === m.zh); if (q) qs.push(q); break; }
       }

@@ -65,7 +65,7 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function sample(a, n) { return shuffle(a).slice(0, n); }
 const KIND_BADGE = { general: ['一般語', 'badge-general'], proper: ['固有名詞', 'badge-proper'], term: ['専門用語', 'badge-term'] };
-const APP_VERSION = 28; // keep in sync with the SW shell version (akcn-shell-v28)
+const APP_VERSION = 29; // keep in sync with the SW shell version (akcn-shell-v29)
 const POS_LABEL = { noun: '名詞', verb: '動詞', adj: '形容詞', adv: '副詞', pron: '代名詞', other: 'その他' };
 
 // ---------------- data ----------------
@@ -526,6 +526,7 @@ const UI = { view: 'home', tab: 'story' };
 function rerender() {
   if (UI.view === 'home') renderHome();
   else if (UI.view === 'lesson') renderQuestion();
+  else if (UI.view === 'cards') renderCards();
   else if (UI.view === 'reader') renderReader(UI.readerEp);
 }
 
@@ -546,6 +547,7 @@ async function renderHome() {
       <button class="tab ${UI.tab === 'story' ? 'active' : ''}" data-tab="story">ストーリー</button>
       <button class="tab ${UI.tab === 'terms' ? 'active' : ''}" data-tab="terms">用語ステージ</button>
       <button class="tab ${UI.tab === 'hsk' ? 'active' : ''}" data-tab="hsk">HSK1</button>
+      <button class="tab ${UI.tab === 'cards' ? 'active' : ''}" data-tab="cards">カード</button>
     </div>`;
   if (UI.tab === 'story') {
     // accordion: which chapters are open (persisted per device; default = the
@@ -627,6 +629,25 @@ async function renderHome() {
         </button>`;
     }
     html += '</div>';
+  } else if (UI.tab === 'cards') {
+    const deck = await buildDeck();
+    const st = cardsState(); const today = dayStr(0);
+    let dueN = 0, newN = 0, learned = 0;
+    for (const c of deck) { const s = st[c.zh]; if (!s) newN++; else { learned++; if (s.due <= today) dueN++; } }
+    const todayN = Math.min(20, dueN + newN);
+    html += `
+      <p class="sheet-note" style="margin:4px 0 10px">クリアしたステージの単語と、間違えた単語がデッキに入ります。忘れかけた頃に再登場するAnki式の復習カードです。</p>
+      <div class="fc-summary">
+        <div class="fcs"><div class="v">${deck.length}</div><div class="k">デッキの単語</div></div>
+        <div class="fcs"><div class="v">${dueN}</div><div class="k">今日の復習</div></div>
+        <div class="fcs"><div class="v">${newN}</div><div class="k">新規</div></div>
+        <div class="fcs"><div class="v">${learned}</div><div class="k">学習中・習得</div></div>
+      </div>
+      <button class="btn next-btn" id="btn-cards-start" ${todayN ? '' : 'disabled'}>▶ 今日のカードを始める（${todayN}枚）</button>
+      ${todayN ? '' : '<p class="sheet-note">今日のカードはありません。新しいステージをクリアすると単語が増えます。</p>'}
+      <h3 class="fc-h">単語帳（タップで詳細・音声）</h3>
+      <input id="fc-search" class="fc-search" type="search" placeholder="単語・ピンイン・意味で検索" value="${esc(FC_QUERY)}">
+      <div id="fc-list">${deckListHTML(deck, FC_QUERY)}</div>`;
   } else {
     html += audioBoxHTML('common');
     for (const cat of TERMS.categories) {
@@ -663,7 +684,176 @@ async function renderHome() {
   $view.querySelectorAll('[data-reader]').forEach(a => a.addEventListener('click', ev => { ev.preventDefault(); openReader(a.getAttribute('data-reader')); }));
   const rv = $view.querySelector('[data-act="review"]');
   if (rv) rv.addEventListener('click', startReview);
+  const cs = $view.querySelector('#btn-cards-start');
+  if (cs) cs.addEventListener('click', startCards);
+  const fs = $view.querySelector('#fc-search');
+  if (fs) fs.addEventListener('input', () => {
+    FC_QUERY = fs.value;
+    const list = $view.querySelector('#fc-list');
+    if (list && DECK) { list.innerHTML = deckListHTML(DECK, FC_QUERY); wireDeckRows(); }
+  });
+  wireDeckRows();
   wireAudioBoxes();
+}
+function wireDeckRows() {
+  $view.querySelectorAll('[data-card-word]').forEach(b => b.addEventListener('click', () => {
+    const c = (DECK || []).find(x => x.zh === b.getAttribute('data-card-word'));
+    if (c) openWordSheet([c.zh, c.py, 'other', c.jp]);
+  }));
+}
+
+// ---------------- flashcards (Anki-style SRS + wordbook) ----------------
+let DECK = null;   // [{zh, py, jp, kind, exZh, exJp}]
+let C = null;      // active card session
+let FC_QUERY = '';
+function cardsState() { if (!store.data.cards) store.data.cards = {}; return store.data.cards; }
+function dayStr(offset) { return new Date(Date.now() + (offset || 0) * 86400000).toISOString().slice(0, 10); }
+
+async function buildDeck() {
+  await loadCore();
+  const byZh = new Map();
+  const add = (zh, py, jp, kind, exZh, exJp) => {
+    if (!zh || !jp || EXCLUDE_WORDS.has(zh)) return;
+    if (!byZh.has(zh)) byZh.set(zh, { zh, py: py || '', jp, kind: kind || 'general', exZh: exZh || '', exJp: exJp || '' });
+  };
+  const done = store.data.done || {};
+  const clearedEps = new Set();
+  for (const k of Object.keys(done)) if ((k.startsWith('s:') || k.startsWith('w:')) && done[k].cleared) clearedEps.add(k.slice(2));
+  const chIds = new Set();
+  for (const epId of clearedEps) { const f = findEpMeta(epId); if (f) chIds.add(f.ch.id); }
+  for (const chId of chIds) {
+    const chData = await loadChapter(chId);
+    for (const ep of chData.episodes) if (clearedEps.has(ep.id))
+      for (const p of epWordPool(ep)) add(p.w, p.py, p.gloss, p.kind, p.exZh, p.exJp);
+  }
+  for (const k of Object.keys(done)) {
+    if (!done[k].cleared) continue;
+    if (k.startsWith('t:')) {
+      for (const cat of TERMS.categories) { const sec = cat.sections.find(s => s.id === k.slice(2)); if (sec) for (const t of sec.terms) add(t.zh, t.py, t.jp, t.kind); }
+    } else if (k.startsWith('h:') && HSK_CAT) {
+      const sec = HSK_CAT.sections.find(s => s.id === k.slice(2));
+      if (sec) for (const t of sec.terms) add(t.zh, t.py, t.jp, t.kind);
+    }
+  }
+  for (const m of store.data.mistakes) {
+    if (m.t === 'w') { const v = vocabMap[m.w]; if (v) add(v.w, v.py, v.gloss, v.kind); }
+    else if (m.t === 't') {
+      const cats = HSK_CAT ? [...TERMS.categories, HSK_CAT] : TERMS.categories;
+      for (const cat of cats) for (const sec of cat.sections) { const t = sec.terms.find(x => x.zh === m.zh); if (t) add(t.zh, t.py, t.jp, t.kind); }
+    }
+  }
+  DECK = [...byZh.values()];
+  return DECK;
+}
+function cardStatus(c) {
+  const s = cardsState()[c.zh];
+  if (!s) return { label: '未学習', cls: 'fc-st-new' };
+  if (s.iv >= 21) return { label: '習得', cls: 'fc-st-done' };
+  return { label: '学習中', cls: 'fc-st-mid' };
+}
+function deckListHTML(deck, q) {
+  const query = (q || '').trim().toLowerCase();
+  const rows = deck.filter(c => !query || c.zh.includes(query) || c.py.toLowerCase().includes(query) || c.jp.includes(query));
+  if (!rows.length) return '<p class="sheet-note">該当する単語がありません</p>';
+  const st = cardsState();
+  return rows.slice(0, 400).map(c => {
+    const s = st[c.zh]; const cs = cardStatus(c);
+    const due = s && s.iv < 21 ? ` ・ 次回 ${s.due.slice(5).replace('-', '/')}` : '';
+    return `<button class="fc-row" data-card-word="${esc(c.zh)}">
+      <span class="fc-row-zh">${esc(c.zh)}</span>
+      <span class="fc-row-mid"><span class="fc-row-py">${esc(c.py)}</span><span class="fc-row-jp">${esc(c.jp)}</span></span>
+      <span class="fc-st ${cs.cls}">${cs.label}${due}</span>
+    </button>`;
+  }).join('') + (rows.length > 400 ? '<p class="sheet-note">…ほか ' + (rows.length - 400) + ' 語（検索で絞り込めます）</p>' : '');
+}
+function previewIv(g, s) {
+  const iv = s ? s.iv : 0, reps = s ? s.reps : 0, ease = s ? s.ease : 2.5;
+  if (g === 'again') return '今日';
+  if (g === 'hard') return (reps === 0 ? 1 : Math.max(1, Math.round(iv * 1.2))) + '日後';
+  if (g === 'good') return (reps === 0 ? 1 : reps === 1 ? 3 : Math.round(iv * ease)) + '日後';
+  return (reps === 0 ? 3 : Math.round(iv * ease * 1.3)) + '日後';
+}
+async function startCards() {
+  const deck = DECK || await buildDeck();
+  const st = cardsState(); const today = dayStr(0);
+  const due = [], fresh = [];
+  for (const c of deck) { const s = st[c.zh]; if (!s) fresh.push(c); else if (s.due <= today) due.push(c); }
+  due.sort((a, b) => st[a.zh].due < st[b.zh].due ? -1 : 1);
+  const queue = [...due, ...fresh].slice(0, 20);
+  if (!queue.length) { alert('今日のカードはありません。新しいステージをクリアすると単語が増えます'); return; }
+  C = { queue, idx: 0, flipped: false, again: [], goodCount: 0, seen: 0 };
+  UI.view = 'cards';
+  renderCards();
+  const cur = C.queue[0]; if (cur && hasAudio(cur.zh)) playText(cur.zh);
+}
+function gradeCard(g) {
+  const c = C.queue[C.idx]; const st = cardsState();
+  const s = st[c.zh] || { iv: 0, ease: 2.5, reps: 0, due: dayStr(0) };
+  if (g === 'again') { s.iv = 0; s.ease = Math.max(1.3, s.ease - 0.2); s.reps = 0; s.due = dayStr(0); if (!C.again.some(x => x.zh === c.zh)) C.again.push(c); }
+  else if (g === 'hard') { s.iv = s.reps === 0 ? 1 : Math.max(1, Math.round(s.iv * 1.2)); s.ease = Math.max(1.3, s.ease - 0.15); s.reps++; s.due = dayStr(s.iv); }
+  else if (g === 'good') { s.iv = s.reps === 0 ? 1 : s.reps === 1 ? 3 : Math.round(s.iv * s.ease); s.reps++; s.due = dayStr(s.iv); C.goodCount++; }
+  else { s.iv = s.reps === 0 ? 3 : Math.round(s.iv * s.ease * 1.3); s.ease = Math.min(3.0, s.ease + 0.15); s.reps++; s.due = dayStr(s.iv); C.goodCount++; }
+  st[c.zh] = s; store.save();
+  C.seen++; C.idx++; C.flipped = false;
+  if (C.idx >= C.queue.length && C.again.length) { C.queue.push(...C.again); C.again = []; }
+  if (C.idx >= C.queue.length) { finishCards(); return; }
+  renderCards();
+  const cur = C.queue[C.idx]; if (cur && hasAudio(cur.zh)) playText(cur.zh);
+}
+function finishCards() {
+  const gained = C.goodCount, seen = C.seen;
+  if (gained) store.data.xp += gained;
+  store.touchStreak(); store.save(); renderStats();
+  C = null;
+  $view.innerHTML = `
+    <div class="result-card">
+      <span class="hero-tag">CARDS</span>
+      <h2>カード復習、おつかれさま！</h2>
+      <div class="result-stats">
+        <div class="rstat"><div class="v">${seen}</div><div class="k">見たカード</div></div>
+        <div class="rstat"><div class="v">${gained}</div><div class="k">覚えた（XP+${gained}）</div></div>
+        <div class="rstat"><div class="v">${store.data.streakCount}日</div><div class="k">連続学習</div></div>
+      </div>
+      <button class="btn" id="btn-home">ホームへ</button>
+    </div>`;
+  document.getElementById('btn-home').addEventListener('click', () => { UI.view = 'home'; UI.tab = 'cards'; renderHome(); });
+}
+function renderCards() {
+  if (!C) { UI.view = 'home'; renderHome(); return; }
+  const c = C.queue[C.idx]; const s = cardsState()[c.zh];
+  const kindBadge = KIND_BADGE[c.kind] ? `<span class="badge ${KIND_BADGE[c.kind][1]}">${KIND_BADGE[c.kind][0]}</span>` : '';
+  const pct = Math.round(C.idx / C.queue.length * 100);
+  let html = `
+    <div class="lesson-head">
+      <button class="icon-btn" id="btn-quit-cards" aria-label="やめる">✕</button>
+      <div class="progressbar"><i style="width:${pct}%"></i></div>
+      <div class="hearts" style="color:var(--muted);letter-spacing:0">${cardStatus(c).label}</div>
+    </div>
+    <div class="small muted" style="margin-bottom:8px">フラッシュカード ・ ${C.idx + 1} / ${C.queue.length} 枚</div>
+    <div class="q-card fc-card">
+      <div class="fc-kind">${kindBadge}</div>
+      <div class="fc-word">${esc(c.zh)}</div>
+      <div style="margin-top:10px">${speakBtn(c.zh, true)}</div>`;
+  if (!C.flipped) {
+    html += `<button class="btn fc-flip" id="btn-flip">答えを表示</button>`;
+  } else {
+    html += `
+      <div class="fc-py">${esc(c.py)}</div>
+      <div class="fc-jp">${esc(c.jp)}</div>
+      ${c.exZh ? `<div class="fc-ex"><div class="fc-ex-zh">${esc(c.exZh)} ${speakBtn(c.exZh)}</div><div class="fc-ex-jp">${esc(c.exJp)}</div></div>` : ''}
+      <div class="fc-grades">
+        <button class="fc-grade g-again" data-grade="again">もう一度<span>${previewIv('again', s)}</span></button>
+        <button class="fc-grade g-hard" data-grade="hard">あいまい<span>${previewIv('hard', s)}</span></button>
+        <button class="fc-grade g-good" data-grade="good">知ってる<span>${previewIv('good', s)}</span></button>
+        <button class="fc-grade g-easy" data-grade="easy">簡単<span>${previewIv('easy', s)}</span></button>
+      </div>`;
+  }
+  html += '</div>';
+  $view.innerHTML = html;
+  document.getElementById('btn-quit-cards').addEventListener('click', () => { C = null; UI.view = 'home'; UI.tab = 'cards'; renderHome(); });
+  const fb = document.getElementById('btn-flip');
+  if (fb) fb.addEventListener('click', () => { C.flipped = true; renderCards(); });
+  $view.querySelectorAll('[data-grade]').forEach(b => b.addEventListener('click', () => gradeCard(b.getAttribute('data-grade'))));
 }
 
 // ---------------- lesson building ----------------

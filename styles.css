@@ -146,6 +146,7 @@ h2.sec-title::before{content:"";display:inline-block;width:9px;height:9px;backgr
 #report-comment{width:100%;box-sizing:border-box;border:1px solid rgba(127,127,140,.45);border-radius:8px;background:none;color:inherit;padding:10px;font-size:14px;margin-bottom:10px}
 #sync-token{width:100%;box-sizing:border-box;border:1px solid rgba(127,127,140,.45);border-radius:8px;background:none;color:inherit;padding:10px;font-size:14px}
 .report-row{border:1px solid rgba(127,127,140,.3);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.ver-badge{font-size:10px;font-weight:700;color:var(--muted,#9a9aa5);border:1px solid rgba(127,127,140,.4);border-radius:99px;padding:1px 6px;white-space:nowrap;flex:none}
 .next-lesson{padding:15px 16px;line-height:1.35}
 .next-lesson span{display:block;font-size:13px;font-weight:600;opacity:.85;margin-top:2px}
 .next-bar{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:14px 14px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(8,8,12,.94) 34%);display:flex;justify-content:center;pointer-events:none}

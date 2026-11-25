@@ -3,7 +3,7 @@
    - Audio MP3: served from the user-managed per-chapter caches
      ('akcn-audio-<chapterId>') when present; otherwise network only
      (never auto-stored, so device storage stays under user control). */
-const SHELL = 'akcn-shell-v23';
+const SHELL = 'akcn-shell-v24';
 const SHELL_FILES = [
   './', 'index.html', 'styles.css', 'app.js', 'manifest.json',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png',

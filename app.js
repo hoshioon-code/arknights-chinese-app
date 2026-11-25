@@ -65,6 +65,7 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function sample(a, n) { return shuffle(a).slice(0, n); }
 const KIND_BADGE = { general: ['一般語', 'badge-general'], proper: ['固有名詞', 'badge-proper'], term: ['専門用語', 'badge-term'] };
+const APP_VERSION = 24; // keep in sync with the SW shell version (akcn-shell-v24)
 const POS_LABEL = { noun: '名詞', verb: '動詞', adj: '形容詞', adv: '副詞', pron: '代名詞', other: 'その他' };
 
 // ---------------- data ----------------
@@ -1010,6 +1011,7 @@ async function renderReader(epId) {
       }
     } catch (e) {}
   }
+  document.querySelectorAll('.app-ver').forEach(el => { el.textContent = 'v' + APP_VERSION; });
   renderStats();
   renderHome();
   if (syncCfg().token) syncNow(false);

@@ -1,0 +1,1874 @@
+{
+ "sections": [
+  {
+   "id": "hsk1_1",
+   "name": "第1セット",
+   "nameJp": "1〜30語",
+   "terms": [
+    {
+     "zh": "爱",
+     "py": "ài",
+     "jp": "愛する・好きだ",
+     "kind": "general"
+    },
+    {
+     "zh": "八",
+     "py": "bā",
+     "jp": "8（数字）",
+     "kind": "general"
+    },
+    {
+     "zh": "吧",
+     "py": "ba",
+     "jp": "〜しよう・〜だね（提案・推量の語気）",
+     "kind": "general"
+    },
+    {
+     "zh": "爸爸",
+     "py": "bà ba",
+     "jp": "お父さん・パパ",
+     "kind": "general"
+    },
+    {
+     "zh": "百",
+     "py": "bǎi",
+     "jp": "百",
+     "kind": "general"
+    },
+    {
+     "zh": "白天",
+     "py": "bái tiān",
+     "jp": "昼間",
+     "kind": "general"
+    },
+    {
+     "zh": "半",
+     "py": "bàn",
+     "jp": "半分",
+     "kind": "general"
+    },
+    {
+     "zh": "包子",
+     "py": "bāo zi",
+     "jp": "包子（中華まん）",
+     "kind": "general"
+    },
+    {
+     "zh": "杯子",
+     "py": "bēi zi",
+     "jp": "コップ・カップ",
+     "kind": "general"
+    },
+    {
+     "zh": "本",
+     "py": "běn",
+     "jp": "冊（本の数え方）",
+     "kind": "general"
+    },
+    {
+     "zh": "边",
+     "py": "biān",
+     "jp": "側・〜側",
+     "kind": "general"
+    },
+    {
+     "zh": "病",
+     "py": "bìng",
+     "jp": "病気（になる）",
+     "kind": "general"
+    },
+    {
+     "zh": "不",
+     "py": "bù",
+     "jp": "〜ない（否定）",
+     "kind": "general"
+    },
+    {
+     "zh": "不客气",
+     "py": "bù kè qi",
+     "jp": "どういたしまして",
+     "kind": "general"
+    },
+    {
+     "zh": "不要",
+     "py": "bù yào",
+     "jp": "〜するな・いらない",
+     "kind": "general"
+    },
+    {
+     "zh": "菜",
+     "py": "cài",
+     "jp": "野菜・料理",
+     "kind": "general"
+    },
+    {
+     "zh": "茶",
+     "py": "chá",
+     "jp": "お茶",
+     "kind": "general"
+    },
+    {
+     "zh": "唱",
+     "py": "chàng",
+     "jp": "歌う",
+     "kind": "general"
+    },
+    {
+     "zh": "超市",
+     "py": "chāo shì",
+     "jp": "スーパー",
+     "kind": "general"
+    },
+    {
+     "zh": "车",
+     "py": "chē",
+     "jp": "車",
+     "kind": "general"
+    },
+    {
+     "zh": "吃",
+     "py": "chī",
+     "jp": "食べる",
+     "kind": "general"
+    },
+    {
+     "zh": "出租车",
+     "py": "chū zū chē",
+     "jp": "タクシー",
+     "kind": "general"
+    },
+    {
+     "zh": "穿",
+     "py": "chuān",
+     "jp": "着る・履く",
+     "kind": "general"
+    },
+    {
+     "zh": "大",
+     "py": "dà",
+     "jp": "大きい",
+     "kind": "general"
+    },
+    {
+     "zh": "打电话",
+     "py": "dǎ diàn huà",
+     "jp": "電話をかける",
+     "kind": "general"
+    },
+    {
+     "zh": "大家",
+     "py": "dà jiā",
+     "jp": "みんな",
+     "kind": "general"
+    },
+    {
+     "zh": "大学",
+     "py": "dà xué",
+     "jp": "大学",
+     "kind": "general"
+    },
+    {
+     "zh": "大学生",
+     "py": "dà xué shēng",
+     "jp": "大学生",
+     "kind": "general"
+    },
+    {
+     "zh": "到",
+     "py": "dào",
+     "jp": "着く・〜まで",
+     "kind": "general"
+    },
+    {
+     "zh": "的",
+     "py": "de",
+     "jp": "〜の（所有）",
+     "kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "hsk1_2",
+   "name": "第2セット",
+   "nameJp": "31〜60語",
+   "terms": [
+    {
+     "zh": "第",
+     "py": "dì",
+     "jp": "第〜（順序）",
+     "kind": "general"
+    },
+    {
+     "zh": "弟弟",
+     "py": "dì di",
+     "jp": "弟",
+     "kind": "general"
+    },
+    {
+     "zh": "店",
+     "py": "diàn",
+     "jp": "店（みせ）",
+     "kind": "general"
+    },
+    {
+     "zh": "点",
+     "py": "diǎn",
+     "jp": "〜時（時刻）",
+     "kind": "general"
+    },
+    {
+     "zh": "电话",
+     "py": "diàn huà",
+     "jp": "電話",
+     "kind": "general"
+    },
+    {
+     "zh": "电脑",
+     "py": "diàn nǎo",
+     "jp": "パソコン",
+     "kind": "general"
+    },
+    {
+     "zh": "电视",
+     "py": "diàn shì",
+     "jp": "テレビ",
+     "kind": "general"
+    },
+    {
+     "zh": "电影",
+     "py": "diàn yǐng",
+     "jp": "映画",
+     "kind": "general"
+    },
+    {
+     "zh": "电影院",
+     "py": "diàn yǐng yuàn",
+     "jp": "映画館",
+     "kind": "general"
+    },
+    {
+     "zh": "东西",
+     "py": "dōng xi",
+     "jp": "物・もの",
+     "kind": "general"
+    },
+    {
+     "zh": "都",
+     "py": "dōu",
+     "jp": "全部・みんな",
+     "kind": "general"
+    },
+    {
+     "zh": "读",
+     "py": "dú",
+     "jp": "読む・音読する",
+     "kind": "general"
+    },
+    {
+     "zh": "读书",
+     "py": "dú shū",
+     "jp": "本を読む・勉強する",
+     "kind": "general"
+    },
+    {
+     "zh": "对",
+     "py": "duì",
+     "jp": "〜に対して・〜に",
+     "kind": "general"
+    },
+    {
+     "zh": "对不起",
+     "py": "duì bu qǐ",
+     "jp": "すみません・ごめんなさい",
+     "kind": "general"
+    },
+    {
+     "zh": "多",
+     "py": "duō",
+     "jp": "多い・とても",
+     "kind": "general"
+    },
+    {
+     "zh": "多少",
+     "py": "duō shao",
+     "jp": "いくつ・いくら（数量を尋ねる）",
+     "kind": "general"
+    },
+    {
+     "zh": "二",
+     "py": "èr",
+     "jp": "2（数字）",
+     "kind": "general"
+    },
+    {
+     "zh": "儿子",
+     "py": "ér zi",
+     "jp": "息子",
+     "kind": "general"
+    },
+    {
+     "zh": "饭",
+     "py": "fàn",
+     "jp": "ご飯・食事",
+     "kind": "general"
+    },
+    {
+     "zh": "饭店",
+     "py": "fàn diàn",
+     "jp": "レストラン・食堂",
+     "kind": "general"
+    },
+    {
+     "zh": "房间",
+     "py": "fáng jiān",
+     "jp": "部屋",
+     "kind": "general"
+    },
+    {
+     "zh": "非常",
+     "py": "fēi cháng",
+     "jp": "とても・非常に",
+     "kind": "general"
+    },
+    {
+     "zh": "飞机",
+     "py": "fēi jī",
+     "jp": "飛行機",
+     "kind": "general"
+    },
+    {
+     "zh": "分",
+     "py": "fēn",
+     "jp": "分（時間）・点",
+     "kind": "general"
+    },
+    {
+     "zh": "分钟",
+     "py": "fēn zhōng",
+     "jp": "分（時間の長さ）",
+     "kind": "general"
+    },
+    {
+     "zh": "高兴",
+     "py": "gāo xìng",
+     "jp": "嬉しい・楽しい",
+     "kind": "general"
+    },
+    {
+     "zh": "个",
+     "py": "gè",
+     "jp": "個（汎用の数え方）",
+     "kind": "general"
+    },
+    {
+     "zh": "歌",
+     "py": "gē",
+     "jp": "歌",
+     "kind": "general"
+    },
+    {
+     "zh": "哥哥",
+     "py": "gē ge",
+     "jp": "兄",
+     "kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "hsk1_3",
+   "name": "第3セット",
+   "nameJp": "61〜90語",
+   "terms": [
+    {
+     "zh": "给",
+     "py": "gěi",
+     "jp": "あげる・〜に（与える）",
+     "kind": "general"
+    },
+    {
+     "zh": "公司",
+     "py": "gōng sī",
+     "jp": "会社",
+     "kind": "general"
+    },
+    {
+     "zh": "工作",
+     "py": "gōng zuò",
+     "jp": "仕事・働く",
+     "kind": "general"
+    },
+    {
+     "zh": "狗",
+     "py": "gǒu",
+     "jp": "犬",
+     "kind": "general"
+    },
+    {
+     "zh": "贵",
+     "py": "guì",
+     "jp": "高い（値段）",
+     "kind": "general"
+    },
+    {
+     "zh": "国",
+     "py": "guó",
+     "jp": "国（くに）",
+     "kind": "general"
+    },
+    {
+     "zh": "还",
+     "py": "hái",
+     "jp": "まだ・さらに",
+     "kind": "general"
+    },
+    {
+     "zh": "孩子",
+     "py": "hái zi",
+     "jp": "子ども",
+     "kind": "general"
+    },
+    {
+     "zh": "汉语",
+     "py": "Hàn yǔ",
+     "jp": "中国語",
+     "kind": "general"
+    },
+    {
+     "zh": "汉字",
+     "py": "hàn zì",
+     "jp": "漢字",
+     "kind": "general"
+    },
+    {
+     "zh": "号",
+     "py": "hào",
+     "jp": "〜号・〜日",
+     "kind": "general"
+    },
+    {
+     "zh": "好",
+     "py": "hǎo",
+     "jp": "良い",
+     "kind": "general"
+    },
+    {
+     "zh": "好吃",
+     "py": "hǎo chī",
+     "jp": "おいしい（食べ物）",
+     "kind": "general"
+    },
+    {
+     "zh": "好看",
+     "py": "hǎo kàn",
+     "jp": "見た目が良い・きれい",
+     "kind": "general"
+    },
+    {
+     "zh": "好听",
+     "py": "hǎo tīng",
+     "jp": "聞いて心地よい",
+     "kind": "general"
+    },
+    {
+     "zh": "好玩儿",
+     "py": "hǎo wán r",
+     "jp": "面白い・楽しい",
+     "kind": "general"
+    },
+    {
+     "zh": "和",
+     "py": "hé",
+     "jp": "〜と（接続）",
+     "kind": "general"
+    },
+    {
+     "zh": "喝",
+     "py": "hē",
+     "jp": "飲む",
+     "kind": "general"
+    },
+    {
+     "zh": "很",
+     "py": "hěn",
+     "jp": "とても",
+     "kind": "general"
+    },
+    {
+     "zh": "后",
+     "py": "hòu",
+     "jp": "後ろ・後（あと）",
+     "kind": "general"
+    },
+    {
+     "zh": "会",
+     "py": "huì",
+     "jp": "〜できる（習得）・〜だろう",
+     "kind": "general"
+    },
+    {
+     "zh": "回",
+     "py": "huí",
+     "jp": "帰る・戻る",
+     "kind": "general"
+    },
+    {
+     "zh": "火车",
+     "py": "huǒ chē",
+     "jp": "列車",
+     "kind": "general"
+    },
+    {
+     "zh": "几",
+     "py": "jǐ",
+     "jp": "いくつ（数を尋ねる）",
+     "kind": "general"
+    },
+    {
+     "zh": "鸡蛋",
+     "py": "jī dàn",
+     "jp": "鶏卵・卵",
+     "kind": "general"
+    },
+    {
+     "zh": "家",
+     "py": "jiā",
+     "jp": "家・家庭",
+     "kind": "general"
+    },
+    {
+     "zh": "家人",
+     "py": "jiā rén",
+     "jp": "家族",
+     "kind": "general"
+    },
+    {
+     "zh": "件",
+     "py": "jiàn",
+     "jp": "件（物事・衣類の数え方）",
+     "kind": "general"
+    },
+    {
+     "zh": "见",
+     "py": "jiàn",
+     "jp": "会う・見える",
+     "kind": "general"
+    },
+    {
+     "zh": "叫",
+     "py": "jiào",
+     "jp": "〜と呼ぶ・〜という名前だ",
+     "kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "hsk1_4",
+   "name": "第4セット",
+   "nameJp": "91〜120語",
+   "terms": [
+    {
+     "zh": "饺子",
+     "py": "jiǎo zi",
+     "jp": "餃子",
+     "kind": "general"
+    },
+    {
+     "zh": "姐姐",
+     "py": "jiě jie",
+     "jp": "姉",
+     "kind": "general"
+    },
+    {
+     "zh": "今年",
+     "py": "jīn nián",
+     "jp": "今年",
+     "kind": "general"
+    },
+    {
+     "zh": "今天",
+     "py": "jīn tiān",
+     "jp": "今日",
+     "kind": "general"
+    },
+    {
+     "zh": "九",
+     "py": "jiǔ",
+     "jp": "9（数字）",
+     "kind": "general"
+    },
+    {
+     "zh": "觉得",
+     "py": "jué de",
+     "jp": "〜と思う・感じる",
+     "kind": "general"
+    },
+    {
+     "zh": "开",
+     "py": "kāi",
+     "jp": "開ける・開く",
+     "kind": "general"
+    },
+    {
+     "zh": "开车",
+     "py": "kāi chē",
+     "jp": "車を運転する",
+     "kind": "general"
+    },
+    {
+     "zh": "看",
+     "py": "kàn",
+     "jp": "見る",
+     "kind": "general"
+    },
+    {
+     "zh": "看病",
+     "py": "kàn bìng",
+     "jp": "医者に診てもらう",
+     "kind": "general"
+    },
+    {
+     "zh": "看见",
+     "py": "kàn jiàn",
+     "jp": "見える・目に入る",
+     "kind": "general"
+    },
+    {
+     "zh": "课",
+     "py": "kè",
+     "jp": "授業",
+     "kind": "general"
+    },
+    {
+     "zh": "可以",
+     "py": "kě yǐ",
+     "jp": "〜してもよい・できる",
+     "kind": "general"
+    },
+    {
+     "zh": "口",
+     "py": "kǒu",
+     "jp": "口（ものを数える・一口）",
+     "kind": "general"
+    },
+    {
+     "zh": "块",
+     "py": "kuài",
+     "jp": "塊・元（通貨の口語）",
+     "kind": "general"
+    },
+    {
+     "zh": "来",
+     "py": "lái",
+     "jp": "来る",
+     "kind": "general"
+    },
+    {
+     "zh": "老师",
+     "py": "lǎo shī",
+     "jp": "先生・教師",
+     "kind": "general"
+    },
+    {
+     "zh": "了",
+     "py": "le",
+     "jp": "〜した（完了の語気）",
+     "kind": "general"
+    },
+    {
+     "zh": "冷",
+     "py": "lěng",
+     "jp": "寒い・冷たい",
+     "kind": "general"
+    },
+    {
+     "zh": "里",
+     "py": "lǐ",
+     "jp": "中・〜の中",
+     "kind": "general"
+    },
+    {
+     "zh": "两",
+     "py": "liǎng",
+     "jp": "2つ（数量の二）",
+     "kind": "general"
+    },
+    {
+     "zh": "零",
+     "py": "líng",
+     "jp": "ゼロ・零",
+     "kind": "general"
+    },
+    {
+     "zh": "六",
+     "py": "liù",
+     "jp": "6（数字）",
+     "kind": "general"
+    },
+    {
+     "zh": "吗",
+     "py": "ma",
+     "jp": "〜か（疑問の語気）",
+     "kind": "general"
+    },
+    {
+     "zh": "妈妈",
+     "py": "mā ma",
+     "jp": "お母さん・ママ",
+     "kind": "general"
+    },
+    {
+     "zh": "买",
+     "py": "mǎi",
+     "jp": "買う",
+     "kind": "general"
+    },
+    {
+     "zh": "卖",
+     "py": "mài",
+     "jp": "売る",
+     "kind": "general"
+    },
+    {
+     "zh": "忙",
+     "py": "máng",
+     "jp": "忙しい",
+     "kind": "general"
+    },
+    {
+     "zh": "猫",
+     "py": "māo",
+     "jp": "猫",
+     "kind": "general"
+    },
+    {
+     "zh": "没关系",
+     "py": "méi guān xi",
+     "jp": "大丈夫・構わない",
+     "kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "hsk1_5",
+   "name": "第5セット",
+   "nameJp": "121〜150語",
+   "terms": [
+    {
+     "zh": "妹妹",
+     "py": "mèi mei",
+     "jp": "妹",
+     "kind": "general"
+    },
+    {
+     "zh": "没事",
+     "py": "méi shì",
+     "jp": "大丈夫・何でもない",
+     "kind": "general"
+    },
+    {
+     "zh": "没有",
+     "py": "méi yǒu",
+     "jp": "ない・持っていない",
+     "kind": "general"
+    },
+    {
+     "zh": "们",
+     "py": "men",
+     "jp": "〜たち（複数）",
+     "kind": "general"
+    },
+    {
+     "zh": "米饭",
+     "py": "mǐ fàn",
+     "jp": "ご飯（炊いた米）",
+     "kind": "general"
+    },
+    {
+     "zh": "面包",
+     "py": "miàn bāo",
+     "jp": "パン",
+     "kind": "general"
+    },
+    {
+     "zh": "面条儿",
+     "py": "miàn tiáo r",
+     "jp": "麺",
+     "kind": "general"
+    },
+    {
+     "zh": "明年",
+     "py": "míng nián",
+     "jp": "来年",
+     "kind": "general"
+    },
+    {
+     "zh": "明天",
+     "py": "míng tiān",
+     "jp": "明日",
+     "kind": "general"
+    },
+    {
+     "zh": "名字",
+     "py": "míng zi",
+     "jp": "名前",
+     "kind": "general"
+    },
+    {
+     "zh": "哪",
+     "py": "nǎ",
+     "jp": "どの・どちら",
+     "kind": "general"
+    },
+    {
+     "zh": "那",
+     "py": "nà",
+     "jp": "あの・その",
+     "kind": "general"
+    },
+    {
+     "zh": "那边",
+     "py": "nà bian",
+     "jp": "あちら側",
+     "kind": "general"
+    },
+    {
+     "zh": "哪个",
+     "py": "nǎ ge",
+     "jp": "どれ・どの",
+     "kind": "general"
+    },
+    {
+     "zh": "那个",
+     "py": "nà ge",
+     "jp": "あの・あれ",
+     "kind": "general"
+    },
+    {
+     "zh": "哪里",
+     "py": "nǎ lǐ",
+     "jp": "どこ",
+     "kind": "general"
+    },
+    {
+     "zh": "那里",
+     "py": "nà li",
+     "jp": "あそこ",
+     "kind": "general"
+    },
+    {
+     "zh": "哪儿",
+     "py": "nǎ r",
+     "jp": "どこ（口語）",
+     "kind": "general"
+    },
+    {
+     "zh": "那儿",
+     "py": "nà r",
+     "jp": "あそこ（口語）",
+     "kind": "general"
+    },
+    {
+     "zh": "哪些",
+     "py": "nǎ xiē",
+     "jp": "どれら・どの〜",
+     "kind": "general"
+    },
+    {
+     "zh": "那些",
+     "py": "nà xiē",
+     "jp": "あれら・あの〜",
+     "kind": "general"
+    },
+    {
+     "zh": "男",
+     "py": "nán",
+     "jp": "男・男性",
+     "kind": "general"
+    },
+    {
+     "zh": "男朋友",
+     "py": "nán péng you",
+     "jp": "彼氏",
+     "kind": "general"
+    },
+    {
+     "zh": "呢",
+     "py": "ne",
+     "jp": "〜は？（疑問の語気）",
+     "kind": "general"
+    },
+    {
+     "zh": "能",
+     "py": "néng",
+     "jp": "〜できる（能力・許可）",
+     "kind": "general"
+    },
+    {
+     "zh": "你",
+     "py": "nǐ",
+     "jp": "あなた",
+     "kind": "general"
+    },
+    {
+     "zh": "你好",
+     "py": "nǐ hǎo",
+     "jp": "こんにちは",
+     "kind": "general"
+    },
+    {
+     "zh": "你们",
+     "py": "nǐ men",
+     "jp": "あなたたち",
+     "kind": "general"
+    },
+    {
+     "zh": "年",
+     "py": "nián",
+     "jp": "年",
+     "kind": "general"
+    },
+    {
+     "zh": "您",
+     "py": "nín",
+     "jp": "あなた（丁寧）",
+     "kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "hsk1_6",
+   "name": "第6セット",
+   "nameJp": "151〜180語",
+   "terms": [
+    {
+     "zh": "牛奶",
+     "py": "niú nǎi",
+     "jp": "牛乳",
+     "kind": "general"
+    },
+    {
+     "zh": "女",
+     "py": "nǚ",
+     "jp": "女・女性",
+     "kind": "general"
+    },
+    {
+     "zh": "女儿",
+     "py": "nǚ ér",
+     "jp": "娘・娘さん",
+     "kind": "general"
+    },
+    {
+     "zh": "女朋友",
+     "py": "nǚ péng you",
+     "jp": "彼女（恋人）",
+     "kind": "general"
+    },
+    {
+     "zh": "女士",
+     "py": "nǚ shì",
+     "jp": "女性への敬称（〜さん）",
+     "kind": "general"
+    },
+    {
+     "zh": "朋友",
+     "py": "péng you",
+     "jp": "友達",
+     "kind": "general"
+    },
+    {
+     "zh": "便宜",
+     "py": "pián yi",
+     "jp": "安い",
+     "kind": "general"
+    },
+    {
+     "zh": "漂亮",
+     "py": "piào liang",
+     "jp": "きれい・美しい",
+     "kind": "general"
+    },
+    {
+     "zh": "苹果",
+     "py": "píng guǒ",
+     "jp": "りんご",
+     "kind": "general"
+    },
+    {
+     "zh": "七",
+     "py": "qī",
+     "jp": "7（数字）",
+     "kind": "general"
+    },
+    {
+     "zh": "起床",
+     "py": "qǐ chuáng",
+     "jp": "起きる・起床する",
+     "kind": "general"
+    },
+    {
+     "zh": "前",
+     "py": "qián",
+     "jp": "前・前側",
+     "kind": "general"
+    },
+    {
+     "zh": "千",
+     "py": "qiān",
+     "jp": "千",
+     "kind": "general"
+    },
+    {
+     "zh": "钱",
+     "py": "qián",
+     "jp": "お金",
+     "kind": "general"
+    },
+    {
+     "zh": "请",
+     "py": "qǐng",
+     "jp": "どうぞ・お願いする",
+     "kind": "general"
+    },
+    {
+     "zh": "请问",
+     "py": "qǐng wèn",
+     "jp": "すみませんが（質問の前置き）",
+     "kind": "general"
+    },
+    {
+     "zh": "去",
+     "py": "qù",
+     "jp": "行く",
+     "kind": "general"
+    },
+    {
+     "zh": "去年",
+     "py": "qù nián",
+     "jp": "去年",
+     "kind": "general"
+    },
+    {
+     "zh": "热",
+     "py": "rè",
+     "jp": "暑い・熱い",
+     "kind": "general"
+    },
+    {
+     "zh": "人",
+     "py": "rén",
+     "jp": "人（ひと）",
+     "kind": "general"
+    },
+    {
+     "zh": "认识",
+     "py": "rèn shi",
+     "jp": "知っている・知り合う",
+     "kind": "general"
+    },
+    {
+     "zh": "日",
+     "py": "rì",
+     "jp": "日（ひ）・太陽",
+     "kind": "general"
+    },
+    {
+     "zh": "三",
+     "py": "sān",
+     "jp": "3（数字）",
+     "kind": "general"
+    },
+    {
+     "zh": "上",
+     "py": "shàng",
+     "jp": "上・〜の上",
+     "kind": "general"
+    },
+    {
+     "zh": "上班",
+     "py": "shàng bān",
+     "jp": "出勤する・仕事に行く",
+     "kind": "general"
+    },
+    {
+     "zh": "商店",
+     "py": "shāng diàn",
+     "jp": "店・商店",
+     "kind": "general"
+    },
+    {
+     "zh": "上课",
+     "py": "shàng kè",
+     "jp": "授業に出る・授業が始まる",
+     "kind": "general"
+    },
+    {
+     "zh": "上午",
+     "py": "shàng wǔ",
+     "jp": "午前",
+     "kind": "general"
+    },
+    {
+     "zh": "上学",
+     "py": "shàng xué",
+     "jp": "学校に行く・通学する",
+     "kind": "general"
+    },
+    {
+     "zh": "少",
+     "py": "shǎo",
+     "jp": "少ない",
+     "kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "hsk1_7",
+   "name": "第7セット",
+   "nameJp": "181〜210語",
+   "terms": [
+    {
+     "zh": "什么",
+     "py": "shén me",
+     "jp": "何・何か",
+     "kind": "general"
+    },
+    {
+     "zh": "生病",
+     "py": "shēng bìng",
+     "jp": "病気になる",
+     "kind": "general"
+    },
+    {
+     "zh": "事",
+     "py": "shì",
+     "jp": "こと・用事",
+     "kind": "general"
+    },
+    {
+     "zh": "十",
+     "py": "shí",
+     "jp": "10（数字）",
+     "kind": "general"
+    },
+    {
+     "zh": "是",
+     "py": "shì",
+     "jp": "〜である（断定）",
+     "kind": "general"
+    },
+    {
+     "zh": "时候",
+     "py": "shí hou",
+     "jp": "時間・〜の時",
+     "kind": "general"
+    },
+    {
+     "zh": "时间",
+     "py": "shí jiān",
+     "jp": "時間",
+     "kind": "general"
+    },
+    {
+     "zh": "手机",
+     "py": "shǒu jī",
+     "jp": "携帯電話・スマホ",
+     "kind": "general"
+    },
+    {
+     "zh": "书",
+     "py": "shū",
+     "jp": "本",
+     "kind": "general"
+    },
+    {
+     "zh": "书店",
+     "py": "shū diàn",
+     "jp": "本屋・書店",
+     "kind": "general"
+    },
+    {
+     "zh": "水",
+     "py": "shuǐ",
+     "jp": "水",
+     "kind": "general"
+    },
+    {
+     "zh": "睡",
+     "py": "shuì",
+     "jp": "眠る",
+     "kind": "general"
+    },
+    {
+     "zh": "谁",
+     "py": "shuí",
+     "jp": "誰",
+     "kind": "general"
+    },
+    {
+     "zh": "水果",
+     "py": "shuǐ guǒ",
+     "jp": "果物",
+     "kind": "general"
+    },
+    {
+     "zh": "睡觉",
+     "py": "shuì jiào",
+     "jp": "寝る・就寝する",
+     "kind": "general"
+    },
+    {
+     "zh": "说",
+     "py": "shuō",
+     "jp": "言う・話す",
+     "kind": "general"
+    },
+    {
+     "zh": "说话",
+     "py": "shuō huà",
+     "jp": "話す・おしゃべりする",
+     "kind": "general"
+    },
+    {
+     "zh": "四",
+     "py": "sì",
+     "jp": "4（数字）",
+     "kind": "general"
+    },
+    {
+     "zh": "岁",
+     "py": "suì",
+     "jp": "〜歳",
+     "kind": "general"
+    },
+    {
+     "zh": "他",
+     "py": "tā",
+     "jp": "彼",
+     "kind": "general"
+    },
+    {
+     "zh": "她",
+     "py": "tā",
+     "jp": "彼女（女性）",
+     "kind": "general"
+    },
+    {
+     "zh": "它",
+     "py": "tā",
+     "jp": "それ（物・動物）",
+     "kind": "general"
+    },
+    {
+     "zh": "他们",
+     "py": "tā men",
+     "jp": "彼ら",
+     "kind": "general"
+    },
+    {
+     "zh": "她们",
+     "py": "tā men",
+     "jp": "彼女ら",
+     "kind": "general"
+    },
+    {
+     "zh": "它们",
+     "py": "tā men",
+     "jp": "それら",
+     "kind": "general"
+    },
+    {
+     "zh": "太",
+     "py": "tài",
+     "jp": "とても・〜すぎる",
+     "kind": "general"
+    },
+    {
+     "zh": "天",
+     "py": "tiān",
+     "jp": "日・空",
+     "kind": "general"
+    },
+    {
+     "zh": "天气",
+     "py": "tiān qì",
+     "jp": "天気",
+     "kind": "general"
+    },
+    {
+     "zh": "听",
+     "py": "tīng",
+     "jp": "聞く",
+     "kind": "general"
+    },
+    {
+     "zh": "听见",
+     "py": "tīng jiàn",
+     "jp": "聞こえる",
+     "kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "hsk1_8",
+   "name": "第8セット",
+   "nameJp": "211〜240語",
+   "terms": [
+    {
+     "zh": "同学",
+     "py": "tóng xué",
+     "jp": "同級生・クラスメート",
+     "kind": "general"
+    },
+    {
+     "zh": "外",
+     "py": "wài",
+     "jp": "外",
+     "kind": "general"
+    },
+    {
+     "zh": "外边",
+     "py": "wài bian",
+     "jp": "外側・外",
+     "kind": "general"
+    },
+    {
+     "zh": "晚",
+     "py": "wǎn",
+     "jp": "遅い・夜",
+     "kind": "general"
+    },
+    {
+     "zh": "玩",
+     "py": "wán",
+     "jp": "遊ぶ",
+     "kind": "general"
+    },
+    {
+     "zh": "晚饭",
+     "py": "wǎn fàn",
+     "jp": "夕食",
+     "kind": "general"
+    },
+    {
+     "zh": "晚上",
+     "py": "wǎn shang",
+     "jp": "夜・晩",
+     "kind": "general"
+    },
+    {
+     "zh": "喂",
+     "py": "wèi",
+     "jp": "もしもし・餌をやる",
+     "kind": "general"
+    },
+    {
+     "zh": "问",
+     "py": "wèn",
+     "jp": "聞く・尋ねる",
+     "kind": "general"
+    },
+    {
+     "zh": "问题",
+     "py": "wèn tí",
+     "jp": "問題・質問",
+     "kind": "general"
+    },
+    {
+     "zh": "我",
+     "py": "wǒ",
+     "jp": "私",
+     "kind": "general"
+    },
+    {
+     "zh": "我们",
+     "py": "wǒ men",
+     "jp": "私たち",
+     "kind": "general"
+    },
+    {
+     "zh": "五",
+     "py": "wǔ",
+     "jp": "5（数字）",
+     "kind": "general"
+    },
+    {
+     "zh": "午饭",
+     "py": "wǔ fàn",
+     "jp": "昼食",
+     "kind": "general"
+    },
+    {
+     "zh": "喜欢",
+     "py": "xǐ huan",
+     "jp": "好き・気に入る",
+     "kind": "general"
+    },
+    {
+     "zh": "下",
+     "py": "xià",
+     "jp": "下",
+     "kind": "general"
+    },
+    {
+     "zh": "下班",
+     "py": "xià bān",
+     "jp": "仕事が終わる・退社する",
+     "kind": "general"
+    },
+    {
+     "zh": "下课",
+     "py": "xià kè",
+     "jp": "授業が終わる",
+     "kind": "general"
+    },
+    {
+     "zh": "下午",
+     "py": "xià wǔ",
+     "jp": "午後",
+     "kind": "general"
+    },
+    {
+     "zh": "下雨",
+     "py": "xià yǔ",
+     "jp": "雨が降る",
+     "kind": "general"
+    },
+    {
+     "zh": "先生",
+     "py": "xiān sheng",
+     "jp": "先生・〜さん（男性敬称）",
+     "kind": "general"
+    },
+    {
+     "zh": "现在",
+     "py": "xiàn zài",
+     "jp": "今・現在",
+     "kind": "general"
+    },
+    {
+     "zh": "想",
+     "py": "xiǎng",
+     "jp": "〜したい・思う・考える",
+     "kind": "general"
+    },
+    {
+     "zh": "小",
+     "py": "xiǎo",
+     "jp": "小さい",
+     "kind": "general"
+    },
+    {
+     "zh": "小朋友",
+     "py": "xiǎo péng yǒu",
+     "jp": "子ども（呼びかけ）",
+     "kind": "general"
+    },
+    {
+     "zh": "小时",
+     "py": "xiǎo shí",
+     "jp": "時間（長さ）",
+     "kind": "general"
+    },
+    {
+     "zh": "小学",
+     "py": "xiǎo xué",
+     "jp": "小学校",
+     "kind": "general"
+    },
+    {
+     "zh": "小学生",
+     "py": "xiǎo xué shēng",
+     "jp": "小学生",
+     "kind": "general"
+    },
+    {
+     "zh": "些",
+     "py": "xiē",
+     "jp": "いくつか・少し（数量）",
+     "kind": "general"
+    },
+    {
+     "zh": "写",
+     "py": "xiě",
+     "jp": "書く",
+     "kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "hsk1_9",
+   "name": "第9セット",
+   "nameJp": "241〜270語",
+   "terms": [
+    {
+     "zh": "谢谢",
+     "py": "xiè xie",
+     "jp": "ありがとう",
+     "kind": "general"
+    },
+    {
+     "zh": "新",
+     "py": "xīn",
+     "jp": "新しい",
+     "kind": "general"
+    },
+    {
+     "zh": "星期",
+     "py": "xīng qī",
+     "jp": "週・曜日",
+     "kind": "general"
+    },
+    {
+     "zh": "星期日",
+     "py": "Xīng qī rì",
+     "jp": "日曜日",
+     "kind": "general"
+    },
+    {
+     "zh": "星期天",
+     "py": "Xīng qī tiān",
+     "jp": "日曜日",
+     "kind": "general"
+    },
+    {
+     "zh": "休息",
+     "py": "xiū xi",
+     "jp": "休む・休息する",
+     "kind": "general"
+    },
+    {
+     "zh": "学",
+     "py": "xué",
+     "jp": "学ぶ・勉強する",
+     "kind": "general"
+    },
+    {
+     "zh": "雪",
+     "py": "xuě",
+     "jp": "雪",
+     "kind": "general"
+    },
+    {
+     "zh": "学生",
+     "py": "xué sheng",
+     "jp": "学生",
+     "kind": "general"
+    },
+    {
+     "zh": "学习",
+     "py": "xué xí",
+     "jp": "勉強する・学ぶ",
+     "kind": "general"
+    },
+    {
+     "zh": "学校",
+     "py": "xué xiào",
+     "jp": "学校",
+     "kind": "general"
+    },
+    {
+     "zh": "要",
+     "py": "yào",
+     "jp": "〜したい・必要だ",
+     "kind": "general"
+    },
+    {
+     "zh": "也",
+     "py": "yě",
+     "jp": "〜も",
+     "kind": "general"
+    },
+    {
+     "zh": "一",
+     "py": "yī",
+     "jp": "1（数字）",
+     "kind": "general"
+    },
+    {
+     "zh": "一半",
+     "py": "yī bàn",
+     "jp": "半分",
+     "kind": "general"
+    },
+    {
+     "zh": "一点儿",
+     "py": "yī diǎn r",
+     "jp": "少し・ちょっと",
+     "kind": "general"
+    },
+    {
+     "zh": "衣服",
+     "py": "yī fu",
+     "jp": "服",
+     "kind": "general"
+    },
+    {
+     "zh": "医生",
+     "py": "yī shēng",
+     "jp": "医者",
+     "kind": "general"
+    },
+    {
+     "zh": "一下",
+     "py": "yī xià",
+     "jp": "ちょっと〜する（一度）",
+     "kind": "general"
+    },
+    {
+     "zh": "一些",
+     "py": "yī xiē",
+     "jp": "いくつか・少し",
+     "kind": "general"
+    },
+    {
+     "zh": "医院",
+     "py": "yī yuàn",
+     "jp": "病院",
+     "kind": "general"
+    },
+    {
+     "zh": "椅子",
+     "py": "yǐ zi",
+     "jp": "椅子",
+     "kind": "general"
+    },
+    {
+     "zh": "有",
+     "py": "yǒu",
+     "jp": "ある・いる・持っている",
+     "kind": "general"
+    },
+    {
+     "zh": "有的",
+     "py": "yǒu de",
+     "jp": "ある〜は（〜するものもいる）",
+     "kind": "general"
+    },
+    {
+     "zh": "有点儿",
+     "py": "yǒu diǎn r",
+     "jp": "少し〜（やや）",
+     "kind": "general"
+    },
+    {
+     "zh": "有些",
+     "py": "yǒu xiē",
+     "jp": "いくつかは・少し",
+     "kind": "general"
+    },
+    {
+     "zh": "雨",
+     "py": "yǔ",
+     "jp": "雨",
+     "kind": "general"
+    },
+    {
+     "zh": "元",
+     "py": "yuán",
+     "jp": "元（通貨単位）",
+     "kind": "general"
+    },
+    {
+     "zh": "月",
+     "py": "yuè",
+     "jp": "月",
+     "kind": "general"
+    },
+    {
+     "zh": "再",
+     "py": "zài",
+     "jp": "再び・もっと",
+     "kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "hsk1_10",
+   "name": "第10セット",
+   "nameJp": "271〜300語",
+   "terms": [
+    {
+     "zh": "在",
+     "py": "zài",
+     "jp": "〜にいる・〜にある",
+     "kind": "general"
+    },
+    {
+     "zh": "再见",
+     "py": "zài jiàn",
+     "jp": "さようなら",
+     "kind": "general"
+    },
+    {
+     "zh": "早",
+     "py": "zǎo",
+     "jp": "早い・朝",
+     "kind": "general"
+    },
+    {
+     "zh": "早饭",
+     "py": "zǎo fàn",
+     "jp": "朝食",
+     "kind": "general"
+    },
+    {
+     "zh": "早上",
+     "py": "zǎo shang",
+     "jp": "朝",
+     "kind": "general"
+    },
+    {
+     "zh": "怎么",
+     "py": "zěn me",
+     "jp": "どうやって・なぜ",
+     "kind": "general"
+    },
+    {
+     "zh": "怎么样",
+     "py": "zěn me yàng",
+     "jp": "どうですか・どう？",
+     "kind": "general"
+    },
+    {
+     "zh": "找",
+     "py": "zhǎo",
+     "jp": "探す",
+     "kind": "general"
+    },
+    {
+     "zh": "这",
+     "py": "zhè",
+     "jp": "この・これ",
+     "kind": "general"
+    },
+    {
+     "zh": "这边",
+     "py": "zhè biān",
+     "jp": "こちら側",
+     "kind": "general"
+    },
+    {
+     "zh": "这个",
+     "py": "zhè ge",
+     "jp": "この・これ",
+     "kind": "general"
+    },
+    {
+     "zh": "这里",
+     "py": "zhè lǐ",
+     "jp": "ここ",
+     "kind": "general"
+    },
+    {
+     "zh": "这儿",
+     "py": "zhè r",
+     "jp": "ここ（口語）",
+     "kind": "general"
+    },
+    {
+     "zh": "这些",
+     "py": "zhè xiē",
+     "jp": "これら・この〜",
+     "kind": "general"
+    },
+    {
+     "zh": "真",
+     "py": "zhēn",
+     "jp": "本当に・実に",
+     "kind": "general"
+    },
+    {
+     "zh": "正在",
+     "py": "zhèng zài",
+     "jp": "〜している最中だ",
+     "kind": "general"
+    },
+    {
+     "zh": "只",
+     "py": "zhǐ",
+     "jp": "ただ〜だけ・〜しか",
+     "kind": "general"
+    },
+    {
+     "zh": "知道",
+     "py": "zhī dào",
+     "jp": "知っている・分かる",
+     "kind": "general"
+    },
+    {
+     "zh": "中国",
+     "py": "Zhōng guó",
+     "jp": "中国",
+     "kind": "general"
+    },
+    {
+     "zh": "中文",
+     "py": "Zhōng wén",
+     "jp": "中国語（言語・文）",
+     "kind": "general"
+    },
+    {
+     "zh": "中午",
+     "py": "zhōng wǔ",
+     "jp": "正午・昼",
+     "kind": "general"
+    },
+    {
+     "zh": "中学",
+     "py": "zhōng xué",
+     "jp": "中学校",
+     "kind": "general"
+    },
+    {
+     "zh": "中学生",
+     "py": "zhōng xué shēng",
+     "jp": "中学生",
+     "kind": "general"
+    },
+    {
+     "zh": "住",
+     "py": "zhù",
+     "jp": "住む・泊まる",
+     "kind": "general"
+    },
+    {
+     "zh": "桌子",
+     "py": "zhuō zi",
+     "jp": "机・テーブル",
+     "kind": "general"
+    },
+    {
+     "zh": "字",
+     "py": "zì",
+     "jp": "字・文字",
+     "kind": "general"
+    },
+    {
+     "zh": "做",
+     "py": "zuò",
+     "jp": "する・作る",
+     "kind": "general"
+    },
+    {
+     "zh": "坐",
+     "py": "zuò",
+     "jp": "座る・（乗り物に）乗る",
+     "kind": "general"
+    },
+    {
+     "zh": "做饭",
+     "py": "zuò fàn",
+     "jp": "料理をする",
+     "kind": "general"
+    },
+    {
+     "zh": "昨天",
+     "py": "zuó tiān",
+     "jp": "昨日",
+     "kind": "general"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,8 @@
+# build-only artifacts (not part of the published site)
+venv/
+data-src/
+__pycache__/
+*.log
+audio_failed.json
+audio_missing.json
+data/audio_todo.json

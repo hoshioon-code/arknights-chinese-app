@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>アークナイツで学ぶ中国語</title>
+<meta name="description" content="アークナイツの物語テキストで中国語を学ぶ、Duolingo風レッスンアプリ">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#dfe3e6">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0e11">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="アークナイツ中国語">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="stylesheet" href="styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap">
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <div class="tb-left">
+      <div class="logo-mark" aria-hidden="true"></div>
+      <div class="tb-title">アークナイツ中国語</div>
+      <span class="ver-badge app-ver">v30</span>
+    </div>
+    <div class="tb-right">
+      <div class="stat-chip" title="連続学習日数"><span class="stat-ico">◆</span><span id="stat-streak">0日</span></div>
+      <div class="stat-chip" title="累計XP"><span class="stat-ico">XP</span><span id="stat-xp">0</span></div>
+      <button id="btn-settings" class="icon-btn" aria-label="設定">⚙</button>
+    </div>
+  </header>
+  <div class="hazard" aria-hidden="true"></div>
+
+  <main id="view"></main>
+
+  <div id="sheet-backdrop" class="hidden"></div>
+
+  <!-- word detail sheet -->
+  <section id="word-sheet" class="sheet hidden" aria-label="単語の詳細">
+    <div class="sheet-handle"></div>
+    <div id="word-sheet-body"></div>
+  </section>
+
+  <!-- report sheet -->
+  <section id="report-sheet" class="sheet hidden" aria-label="問題を報告">
+    <div class="sheet-handle"></div>
+    <h2 class="sheet-title">この問題を報告する</h2>
+    <div id="report-target" class="report-target"></div>
+    <div class="report-cats" id="report-cats">
+      <button data-cat="音声がおかしい">音声がおかしい</button>
+      <button data-cat="中国語がおかしい">中国語がおかしい</button>
+      <button data-cat="日本語訳がおかしい">日本語訳がおかしい</button>
+      <button data-cat="選択肢・答えがおかしい">選択肢・答えがおかしい</button>
+      <button data-cat="ピンイン・解説がおかしい">ピンイン・解説がおかしい</button>
+      <button data-cat="その他">その他</button>
+    </div>
+    <textarea id="report-comment" rows="3" placeholder="コメント（任意）"></textarea>
+    <p class="sheet-note" id="report-msg" role="status"></p>
+    <button class="btn" id="report-send" style="width:100%">送信する</button>
+    <button class="btn btn-ghost" data-close-sheet style="width:100%;margin-top:8px">閉じる</button>
+  </section>
+
+  <div id="toast" class="hidden"></div>
+
+  <!-- reports list sheet -->
+  <section id="reports-sheet" class="sheet hidden" aria-label="問題報告の一覧">
+    <div class="sheet-handle"></div>
+    <h2 class="sheet-title">問題報告の一覧</h2>
+    <p class="sheet-note">直ったものは「解決済み」にしてください。解決済みの報告はコピー対象から外れます。</p>
+    <div id="reports-list"></div>
+    <button class="btn btn-ghost" data-close-sheet style="width:100%;margin-top:10px">閉じる</button>
+  </section>
+
+  <!-- settings sheet -->
+  <section id="settings-sheet" class="sheet hidden" aria-label="設定">
+    <div class="sheet-handle"></div>
+    <h2 class="sheet-title">設定</h2>
+    <label class="setting-row">
+      <span>ピンイン表示</span>
+      <input type="checkbox" id="set-pinyin" class="switch">
+    </label>
+    <label class="setting-row">
+      <span>品詞カラー（名詞・動詞・形容詞…）</span>
+      <input type="checkbox" id="set-pos" class="switch">
+    </label>
+    <div class="pos-legend">
+      <span class="lg lg-noun">名詞</span>
+      <span class="lg lg-verb">動詞</span>
+      <span class="lg lg-adj">形容詞</span>
+      <span class="lg lg-adv">副詞</span>
+      <span class="lg lg-pron">代名詞</span>
+    </div>
+    <p class="sheet-note">設定はこの端末に保存されます。学習記録（XP・ストリーク・進捗・ミス）も端末内のみに保存されます。</p>
+    <h3 class="sheet-title" style="font-size:15px;margin-top:14px">アプリの更新</h3>
+    <p class="sheet-note">新しい版が出ているのに画面が古いままのときは、これを押すと最新版を読み直します（学習記録・ダウンロード済み音声は消えません）。</p>
+    <button class="btn btn-ghost" id="btn-refresh" style="width:100%">最新版に更新する</button>
+    <p class="sheet-note">現在のバージョン: <span class="app-ver">v30</span></p>
+
+    <h3 class="sheet-title" style="font-size:15px;margin-top:14px">学習記録のバックアップ</h3>
+    <p class="sheet-note">記録をファイルに書き出しておくと、端末のデータが消えたときでも読み込んで復元できます。</p>
+    <button class="btn btn-ghost" id="btn-export" style="width:100%;margin-bottom:8px">記録をエクスポート</button>
+    <button class="btn btn-ghost" id="btn-import" style="width:100%">記録をインポート</button>
+    <input type="file" id="import-file" accept="application/json,.json" class="hidden">
+    <p class="sheet-note" id="backup-msg" role="status"></p>
+    <h3 class="sheet-title" style="font-size:15px;margin-top:14px">問題報告</h3>
+    <p class="sheet-note">レッスン中の「この問題を報告する」から送った報告は、この端末に保存されます（未解決 <span id="report-count">0</span> 件）。直ったものは一覧から「解決済み」にしてください。下のボタンは報告の内容ではなく、Museに確認を頼むメッセージをコピーします。それをチャットに貼れば、Museがあなたのリポジトリの報告を読んで直します。</p>
+    <button class="btn btn-ghost" id="btn-reports-open" style="width:100%;margin-bottom:8px">報告一覧を開く</button>
+    <button class="btn btn-ghost" id="btn-copy-reports" style="width:100%">Museへの確認メッセージをコピーする</button>
+    <p class="sheet-note" id="report-copy-msg" role="status"></p>
+    <h3 class="sheet-title" style="font-size:15px;margin-top:14px">個人データ同期（自分専用）</h3>
+    <p class="sheet-note">あなたの非公開GitHubリポジトリ「arknights-chinese-data」に、進行状況と問題報告を自動で保存します。Safariで開いてもホーム画面アプリで開いても、同じ記録が戻ります。トークンはこの端末の中だけに保存され、アプリのコードには含まれません。</p>
+    <input type="password" id="sync-token" placeholder="GitHubトークンを貼り付け" autocomplete="off">
+    <button class="btn btn-ghost" id="btn-sync-save" style="width:100%;margin:8px 0">トークンを保存して同期を有効化</button>
+    <button class="btn btn-ghost" id="btn-sync-now" style="width:100%">今すぐ同期</button>
+    <p class="sheet-note" id="sync-status" role="status"></p>
+    <button class="btn btn-ghost" id="settings-close">閉じる</button>
+  </section>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

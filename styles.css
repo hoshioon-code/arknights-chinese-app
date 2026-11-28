@@ -309,3 +309,5 @@ h2.sec-title::before{content:"";display:inline-block;width:9px;height:9px;backgr
 .fc-grade.g-again{border-color:var(--coral)}
 .fc-grade.g-good{border-color:var(--jade)}
 .fc-grade.g-easy{border-color:var(--accent)}
+
+/* build nudge 2026-11-28 */

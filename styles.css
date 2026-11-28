@@ -163,6 +163,8 @@ h2.sec-title::before{content:"";display:inline-block;width:9px;height:9px;backgr
 .seg{display:inline-block;padding:0 1px;border-bottom:1px dotted var(--border);border-radius:3px}
 .q-zh span,.r-zh span{transition:background-color .15s ease}
 .q-zh span.hl,.r-zh span.hl{background:color-mix(in srgb, var(--accent-bright) 38%, transparent);border-radius:3px}
+.q-py .py-seg{transition:background-color .15s ease,color .15s ease;border-radius:3px}
+.q-py .py-seg.hl{background:color-mix(in srgb, var(--accent-bright) 45%, transparent);color:var(--accent-ink);font-weight:700}
 .q-zh span.target{background:var(--accent-bright);color:var(--accent-ink);font-weight:800;border-radius:3px;padding:0 2px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .report-bar{display:flex;justify-content:center;padding:2px 0 10px}
 .report-btn{background:none;border:none;color:var(--dim);font-size:12px;text-decoration:underline;cursor:pointer;padding:6px 10px}

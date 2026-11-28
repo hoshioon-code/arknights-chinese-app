@@ -65,7 +65,7 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function sample(a, n) { return shuffle(a).slice(0, n); }
 const KIND_BADGE = { general: ['一般語', 'badge-general'], proper: ['固有名詞', 'badge-proper'], term: ['専門用語', 'badge-term'] };
-const APP_VERSION = 30; // keep in sync with the SW shell version (akcn-shell-v30)
+const APP_VERSION = 31; // keep in sync with the SW shell version (akcn-shell-v31)
 const POS_LABEL = { noun: '名詞', verb: '動詞', adj: '形容詞', adv: '副詞', pron: '代名詞', other: 'その他' };
 
 // ---------------- data ----------------
@@ -117,6 +117,7 @@ let hlState = null;
 function clearHL() {
   if (!hlState) return;
   hlState.spans.forEach(s => s.el.classList.remove('hl'));
+  if (hlState.pySpans) hlState.pySpans.forEach(el => el.classList.remove('hl'));
   if (hlState.btn) hlState.btn.classList.remove('playing');
   hlState = null;
 }
@@ -139,15 +140,21 @@ function playText(text, btn) {
   audioEl.play().catch(() => {});
   const box = btn ? findSentenceEl(btn) : null;
   const spans = box ? [...box.querySelectorAll('span')].map(el => ({ el, w: Math.max(1, el.textContent.length) })) : [];
-  hlState = { spans, btn: btn || null, total: spans.reduce((a, s) => a + s.w, 0) };
+  let pySpans = [];
+  if (box && box.parentElement) {
+    const pyBox = box.parentElement.querySelector(':scope > .q-py');
+    if (pyBox) pySpans = [...pyBox.querySelectorAll('.py-seg')];
+  }
+  hlState = { spans, pySpans, btn: btn || null, total: spans.reduce((a, s) => a + s.w, 0) };
   if (btn) btn.classList.add('playing');
 }
 audioEl.addEventListener('timeupdate', () => {
   if (!hlState || !hlState.spans.length || !audioEl.duration) return;
   let target = (audioEl.currentTime / audioEl.duration) * hlState.total;
-  let cur = hlState.spans[hlState.spans.length - 1];
-  for (const s of hlState.spans) { target -= s.w; if (target < 0) { cur = s; break; } }
-  hlState.spans.forEach(s => s.el.classList.toggle('hl', s === cur));
+  let idx = hlState.spans.length - 1;
+  for (let i = 0; i < hlState.spans.length; i++) { target -= hlState.spans[i].w; if (target < 0) { idx = i; break; } }
+  hlState.spans.forEach((s, i) => s.el.classList.toggle('hl', i === idx));
+  if (hlState.pySpans) hlState.pySpans.forEach((el, i) => el.classList.toggle('hl', i === idx));
 });
 audioEl.addEventListener('ended', clearHL);
 function speakBtn(text, big) {
@@ -165,6 +172,12 @@ function segHTML(line, hlWord) {
     const tgt = hlWord && s[0] === hlWord ? ' target' : '';
     return `<span class="seg${cls}${tgt}" data-seg="${gi}">${esc(s[0])}</span>`;
   }).join('');
+}
+// Per-segment pinyin mirroring segHTML's order, so playback highlighting can
+// light up the pinyin of the word currently being spoken.
+function segPinyinHTML(line) {
+  if (!line.seg || !line.seg.length) return esc(line.py || '');
+  return line.seg.map(s => `<span class="py-seg">${esc(s[1] || '')}</span>`).join(' ');
 }
 function openWordSheet(seg) {
   const [w, py, cls, gloss] = seg;
@@ -1019,7 +1032,7 @@ function renderQuestion() {
       prompt = `<div class="q-kind">中国語 → 日本語</div>
         ${q.line.sp ? `<div class="q-speaker">${esc(q.line.sp)}</div>` : ''}
         <div class="q-zh">${segHTML(q.line)}</div>
-        ${store.data.settings.pinyin ? `<div class="q-py">${esc(q.line.py)}</div>` : ''}
+        ${store.data.settings.pinyin ? `<div class="q-py">${segPinyinHTML(q.line)}</div>` : ''}
         <div style="margin-top:8px">${speakBtn(q.line.zh)}</div>`;
     } else {
       prompt = `<div class="q-kind">日本語 → 中国語</div>
@@ -1116,7 +1129,7 @@ function judge() {
   let pair = '';
   if (q.type === 'sentence') {
     pair = `<div class="fb-pair"><div class="q-zh fb-sentence" data-speak-sentence="${esc(q.line.zh)}" style="font-size:19px" title="タップで音声再生">${segHTML(q.line)}</div>
-      ${store.data.settings.pinyin ? `<div class="q-py">${esc(q.line.py)}</div>` : ''}
+      ${store.data.settings.pinyin ? `<div class="q-py">${segPinyinHTML(q.line)}</div>` : ''}
       <div class="jp">${esc(q.line.jp)}</div>
       <div style="margin-top:6px">${speakBtn(q.line.zh)}</div></div>`;
   } else if (q.type === 'word') {
@@ -1214,7 +1227,7 @@ async function renderReader(epId) {
       <div class="reader-line">
         ${l.sp ? `<div class="r-sp">${esc(l.sp)}${l.spJp && l.spJp !== l.sp ? ` / ${esc(l.spJp)}` : ''}</div>` : ''}
         <div class="r-zh">${segHTML(l)}</div>
-        ${store.data.settings.pinyin ? `<div class="q-py">${esc(l.py)}</div>` : ''}
+        ${store.data.settings.pinyin ? `<div class="q-py">${segPinyinHTML(l)}</div>` : ''}
         <div class="r-jp">${esc(l.jp)}</div>
         <div class="r-tools">${speakBtn(l.zh)}</div>
       </div>`).join('')}`;

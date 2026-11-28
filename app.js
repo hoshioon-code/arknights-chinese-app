@@ -65,7 +65,7 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function sample(a, n) { return shuffle(a).slice(0, n); }
 const KIND_BADGE = { general: ['一般語', 'badge-general'], proper: ['固有名詞', 'badge-proper'], term: ['専門用語', 'badge-term'] };
-const APP_VERSION = 32; // keep in sync with the SW shell version (akcn-shell-v32)
+const APP_VERSION = 33; // keep in sync with the SW shell version (akcn-shell-v33)
 const POS_LABEL = { noun: '名詞', verb: '動詞', adj: '形容詞', adv: '副詞', pron: '代名詞', other: 'その他' };
 
 // ---------------- data ----------------
@@ -178,6 +178,10 @@ function segHTML(line, hlWord) {
 function segPinyinHTML(line) {
   if (!line.seg || !line.seg.length) return esc(line.py || '');
   return line.seg.map(s => `<span class="py-seg">${esc(s[1] || '')}</span>`).join(' ');
+}
+// Word-for-word Japanese built from the segment glosses, in Chinese word order.
+function literalJP(line) {
+  return (line.seg || []).map(s => s[3] || '').filter(Boolean).join(' / ');
 }
 function openWordSheet(seg) {
   const [w, py, cls, gloss] = seg;
@@ -1122,6 +1126,7 @@ function judge() {
     pair = `<div class="fb-pair"><div class="q-zh fb-sentence" data-speak-sentence="${esc(q.line.zh)}" style="font-size:19px" title="タップで音声再生">${segHTML(q.line)}</div>
       ${store.data.settings.pinyin ? `<div class="q-py">${segPinyinHTML(q.line)}</div>` : ''}
       <div class="jp">${esc(q.line.jp)}</div>
+      ${ok ? `<div class="fb-lit">直訳：${esc(literalJP(q.line))}</div>` : ''}
       <div style="margin-top:6px">${speakBtn(q.line.zh)}</div></div>`;
   } else if (q.type === 'word') {
     const w = q.word;

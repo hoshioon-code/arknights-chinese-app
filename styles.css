@@ -216,6 +216,7 @@ h2.sec-title::before{content:"";display:inline-block;width:9px;height:9px;backgr
 .feedback.ok .fb-title{color:var(--jade)} .feedback.ng .fb-title{color:var(--coral)}
 .fb-pair{font-size:15px;line-height:1.6}
 .fb-pair .jp{color:var(--dim)}
+.fb-lit{margin-top:6px;font-size:13px;color:var(--dim);line-height:1.6;background:var(--surface2);border-radius:8px;padding:6px 9px}
 .praise{margin-top:10px;padding:10px 12px;background:var(--surface2);border-left:4px solid var(--accent-bright);border-radius:10px;font-size:14px}
 .praise b{color:var(--accent)}
 .lesson-foot{margin-top:16px}

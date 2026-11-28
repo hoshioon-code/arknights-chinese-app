@@ -65,7 +65,7 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function sample(a, n) { return shuffle(a).slice(0, n); }
 const KIND_BADGE = { general: ['一般語', 'badge-general'], proper: ['固有名詞', 'badge-proper'], term: ['専門用語', 'badge-term'] };
-const APP_VERSION = 31; // keep in sync with the SW shell version (akcn-shell-v31)
+const APP_VERSION = 32; // keep in sync with the SW shell version (akcn-shell-v32)
 const POS_LABEL = { noun: '名詞', verb: '動詞', adj: '形容詞', adv: '副詞', pron: '代名詞', other: 'その他' };
 
 // ---------------- data ----------------
@@ -1011,19 +1011,10 @@ async function startReview() {
   renderQuestion();
 }
 
-function praiseFor(correct, total) {
-  const r = total ? correct / total : 0;
-  const perfect = ['アーミヤ|全問正解です、ドクター！本当にすごいです！', 'W|全部正解！退屈なくらい完璧だったね♪ 次も楽しませてよ。'];
-  const great = ['ケルシー|上出来だ。この調子で続けなさい。', 'アーミヤ|あと少しで全問正解でした。とてもよくできています！'];
-  const effort = ['クロージャ|おつかれさま！間違えた所は復習で回収しちゃお♪', 'エフイーター|大丈夫、練習あるのみ！次はもっと当てよう。'];
-  const arr = r >= 1 ? perfect : r >= 0.8 ? great : effort;
-  const [name, line] = arr[Math.floor(Math.random() * arr.length)].split('|');
-  return { name, line };
-}
-
 function renderQuestion() {
   if (!L) return;
   SEG_REG.length = 0;
+  $view.style.paddingBottom = '';
   const q = L.qs[L.idx];
   const total = L.qs.length;
   let prompt = '';
@@ -1145,14 +1136,14 @@ function judge() {
     pair = `<div class="fb-pair"><b style="font-size:19px">${esc(t.zh)}</b> <span class="q-py">${esc(t.py)}</span> — ${esc(t.jp)}
       <div style="margin-top:6px">${speakBtn(t.zh)}</div></div>`;
   }
-  const praise = ok ? praiseFor(1, 1) : null;
   document.getElementById('fb').innerHTML = `
     <div class="feedback ${ok ? 'ok' : 'ng'}">
       <div class="fb-title">${ok ? '正解！' : '不正解…'}</div>
       ${pair}
-      ${ok ? `<div class="praise"><b>${esc(praise.name)}</b>「${esc(praise.line)}」</div>` : ''}
     </div>`;
   const foot = $view.querySelector('.lesson-foot');
+  foot.classList.add('foot-fixed');
+  $view.style.paddingBottom = '92px';
   const last = L.idx + 1 >= L.qs.length;
   foot.innerHTML = (!ok && !L.review && L.hearts <= 0)
     ? `<button class="btn" id="btn-next">結果を見る</button>`
@@ -1187,14 +1178,13 @@ function finishLesson(completed) {
     store.save();
   }
   if (completed) store.touchStreak();
-  const praise = praiseFor(correct, total);
   const stageId = L.stageId;
+  $view.style.paddingBottom = '';
   $view.innerHTML = `
     <div class="result-card">
       <span class="hero-tag">${L.review ? 'REVIEW' : 'RESULT'}</span>
       <h2>${completed ? 'レッスン完了！' : 'ハートがなくなりました…'}</h2>
       <div class="muted">${total}問中 ${correct}問 正解</div>
-      <div class="praise" style="text-align:left"><b>${esc(praise.name)}</b>「${esc(praise.line)}」</div>
       <div class="result-stats">
         <div class="rstat"><div class="v">+${L.review ? 0 : xpGain}</div><div class="k">獲得XP</div></div>
         <div class="rstat"><div class="v">${store.data.streakCount}日</div><div class="k">連続学習</div></div>

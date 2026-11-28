@@ -65,7 +65,7 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function sample(a, n) { return shuffle(a).slice(0, n); }
 const KIND_BADGE = { general: ['一般語', 'badge-general'], proper: ['固有名詞', 'badge-proper'], term: ['専門用語', 'badge-term'] };
-const APP_VERSION = 33; // keep in sync with the SW shell version (akcn-shell-v33)
+const APP_VERSION = 34; // keep in sync with the SW shell version (akcn-shell-v34)
 const POS_LABEL = { noun: '名詞', verb: '動詞', adj: '形容詞', adv: '副詞', pron: '代名詞', other: 'その他' };
 
 // ---------------- data ----------------
@@ -641,7 +641,7 @@ async function renderHome() {
       ? `<div class="next-space"></div><div class="next-bar"><button class="btn next-lesson" data-next="${nextId}">▶ 次のレッスン<span>${esc(nextLabel)}</span></button></div>`
       : `<div class="all-clear">全ステージクリア！おつかれさま🎉</div>`;
   } else if (UI.tab === 'hsk') {
-    html += `<p class="sheet-note" style="margin:4px 0 10px">HSK 3.0のHSK1・全300語を、30語ずつのセットで学ぶステージです。聞き取り／単語→意味／意味→単語の3形式で出題します。</p>`;
+    html += `<p class="sheet-note" style="margin:4px 0 10px">HSK 3.0のHSK1・全300語を、30語ずつのセットで学ぶステージです。各セットの30語すべてを1回ずつ、聞き取り／単語→意味／意味→単語の3形式で出題します。</p>`;
     html += audioBoxHTML('hsk1');
     html += `<div class="term-grid">`;
     for (const sec of (HSK ? HSK.sections : [])) {
@@ -651,7 +651,7 @@ async function renderHome() {
         <button class="term-sec" data-stage="${stId}">
           <div class="ts-name">${esc(sec.name)}</div>
           <div class="ts-sub">${esc(sec.nameJp)} ・ ${sec.terms.length}語</div>
-          ${done ? `<div class="ts-best">ベスト ${done.best}/10${done.cleared ? ' ・ クリア' : ''}</div>` : ''}
+          ${done ? `<div class="ts-best">ベスト ${done.best}/${sec.terms.length}${done.cleared ? ' ・ クリア' : ''}</div>` : ''}
         </button>`;
     }
     html += '</div>';
@@ -933,23 +933,33 @@ function buildWordQuestions(ep) {
   }
   return wordQuestions(pool, p => ({ t: 'w', w: p.w }));
 }
-function buildTermQuestions(cat, sec) {
+function buildTermQuestions(cat, sec, count = 10) {
   const pool = sec.terms;
   const catPool = cat.sections.flatMap(s => s.terms);
   const qs = [];
   const formats = ['z2j', 'j2z', 'listen'];
-  let guard = 0;
-  while (qs.length < 10 && guard++ < 60) {
-    const t = pool[Math.floor(Math.random() * pool.length)];
-    const fmt = formats[qs.length % 3] === 'listen' && !hasAudio(t.zh) ? 'z2j' : formats[qs.length % 3];
-    if (qs.some(q => q.term.zh === t.zh && q.dir === fmt)) continue;
+  const mk = (t, i) => {
+    const fmt0 = formats[i % 3];
+    const fmt = fmt0 === 'listen' && !hasAudio(t.zh) ? 'z2j' : fmt0;
     const src = pool.length >= 4 ? pool : catPool;
     const others = sample(src.filter(x => x.zh !== t.zh), 3);
-    if (others.length < 3) break;
+    if (others.length < 3) return null;
     const choices = fmt === 'z2j'
       ? shuffle([t, ...others].map(o => ({ label: o.jp, ok: o.zh === t.zh })))
       : shuffle([t, ...others].map(o => ({ label: o.zh, ok: o.zh === t.zh })));
-    qs.push({ type: 'term', dir: fmt, term: t, choices, mistake: { t: 't', zh: t.zh, cat: cat.id } });
+    return { type: 'term', dir: fmt, term: t, choices, mistake: { t: 't', zh: t.zh, cat: cat.id } };
+  };
+  if (count >= pool.length) {
+    // full coverage: every word in the section is asked exactly once
+    shuffle([...pool]).forEach((t, i) => { const q = mk(t, i); if (q) qs.push(q); });
+    return qs;
+  }
+  let guard = 0;
+  while (qs.length < count && guard++ < 60) {
+    const t = pool[Math.floor(Math.random() * pool.length)];
+    if (qs.some(q => q.term.zh === t.zh)) continue;
+    const q = mk(t, qs.length);
+    if (q) qs.push(q);
   }
   return qs;
 }
@@ -974,10 +984,10 @@ async function startStage(stageId) {
     }
   } else if (kind === 'h' && HSK_CAT) {
     const sec = HSK_CAT.sections.find(s => s.id === rest);
-    if (sec) { title = `HSK1：${sec.name}（${sec.nameJp}）`; qs = buildTermQuestions(HSK_CAT, sec); }
+    if (sec) { title = `HSK1：${sec.name}（${sec.nameJp}）`; qs = buildTermQuestions(HSK_CAT, sec, sec.terms.length); }
   }
   if (!qs.length) { alert('このステージの問題を生成できませんでした'); return; }
-  L = { stageId, title, qs, idx: 0, hearts: 5, correct: 0, sel: -1, judged: false, review: false };
+  L = { stageId, title, qs, idx: 0, hearts: stageId.startsWith('h:') ? 10 : 5, correct: 0, sel: -1, judged: false, review: false };
   UI.view = 'lesson';
   renderQuestion();
 }

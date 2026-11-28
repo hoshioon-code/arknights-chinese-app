@@ -65,7 +65,7 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function sample(a, n) { return shuffle(a).slice(0, n); }
 const KIND_BADGE = { general: ['一般語', 'badge-general'], proper: ['固有名詞', 'badge-proper'], term: ['専門用語', 'badge-term'] };
-const APP_VERSION = 34; // keep in sync with the SW shell version (akcn-shell-v34)
+const APP_VERSION = 35; // keep in sync with the SW shell version (akcn-shell-v35)
 const POS_LABEL = { noun: '名詞', verb: '動詞', adj: '形容詞', adv: '副詞', pron: '代名詞', other: 'その他' };
 
 // ---------------- data ----------------
@@ -641,7 +641,7 @@ async function renderHome() {
       ? `<div class="next-space"></div><div class="next-bar"><button class="btn next-lesson" data-next="${nextId}">▶ 次のレッスン<span>${esc(nextLabel)}</span></button></div>`
       : `<div class="all-clear">全ステージクリア！おつかれさま🎉</div>`;
   } else if (UI.tab === 'hsk') {
-    html += `<p class="sheet-note" style="margin:4px 0 10px">HSK 3.0のHSK1・全300語を、30語ずつのセットで学ぶステージです。各セットの30語すべてを1回ずつ、聞き取り／単語→意味／意味→単語の3形式で出題します。</p>`;
+    html += `<p class="sheet-note" style="margin:4px 0 10px">HSK 3.0のHSK1・全300語を、20語ずつ15セットで学ぶステージです。各セットの20語すべてを1回ずつ、聞き取り／単語→意味／意味→単語の3形式で出題します。</p>`;
     html += audioBoxHTML('hsk1');
     html += `<div class="term-grid">`;
     for (const sec of (HSK ? HSK.sections : [])) {
